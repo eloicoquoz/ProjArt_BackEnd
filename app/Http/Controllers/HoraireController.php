@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Horaire;
+use App\Models\User;
 
 class HoraireController extends Controller
 {
@@ -14,7 +15,7 @@ class HoraireController extends Controller
      */
     public function index()
     {
-        return Horaire::orderBy('date', 'asc')->get();
+        return User::all();
     }
 
     /**
