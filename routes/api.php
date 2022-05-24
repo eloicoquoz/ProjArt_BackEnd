@@ -22,3 +22,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //Route::get('/horaires', [HoraireController::class, 'index']);
 
 Route::get('/users', [HoraireController::class, 'index']);
+
+Route::get('/php', function () {
+    return phpinfo();
+});
+
+Route::get('/pdo', function () {
+    $myPDO = new PDO('pgsql:host=localhost;dbname=projart', 'postgres', 'root');
+	$result = $myPDO->query("SELECT * FROM users ORDER BY id ASC ");
+    return $result->fetchAll();
+});
