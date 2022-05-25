@@ -14,11 +14,15 @@ return new class extends Migration
     public function up()
     {
         Schema::create('cours', function (Blueprint $table) {
-            $table->id();
-            $table->string('Label');
-            $table->string('Couleur');
+            $table->increments('id');
             $table->dateTime('Debut');
             $table->dateTime('Fin');
+            $table->string('matiere_id');
+            $table->foreign('matiere_id')
+            ->references('id')
+            ->on('matieres')
+            ->onDelete('restrict')
+            ->onUpdate('restrict');
         });
     }
 

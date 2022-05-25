@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -18,10 +19,34 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'Nom', 'Prenom', 'Email', 'Password',
     ];
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+    public function classes()
+    {
+        return $this->belongsToMany(Classe::class);
+    }
+    public function cours()
+    {
+        return $this->belongsToMany(Cours::class);
+    }
+
+    public function notifications() { 
+        return $this->hasMany(Notification::class); 
+    } 
+    public function destinataires() { 
+        return $this->hasMany(Destinataire::class); 
+    } 
+    public function remarques() { 
+        return $this->hasMany(Remarque::class); 
+    } 
+    public function events() { 
+        return $this->hasMany(Event::class); 
+    } 
 
     /**
      * The attributes that should be hidden for serialization.
@@ -29,7 +54,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'Password',
         'remember_token',
     ];
 
@@ -41,4 +66,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+    * Permet d'encoder le mot de passe
+    * @param type $password Le mot de passe
+    */
+    public function setPasswordAttribute($password) {
+        $this->attributes['Password'] = Hash::make($password);
+    }
 }

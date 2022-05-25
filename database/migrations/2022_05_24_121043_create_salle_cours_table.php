@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('salle_cours', function (Blueprint $table) {
-            $table->integer('salle_id')->unsigned();
+            $table->string('salle_id');
             $table->integer('cours_id')->unsigned();
             $table->dateTime('Debut');
             $table->dateTime('Fin');

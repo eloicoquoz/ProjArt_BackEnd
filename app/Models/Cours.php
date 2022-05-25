@@ -11,8 +11,24 @@ class Cours extends Model
 
 protected $fillable=['Label','Debut','Fin'];
 
-    public function user()
+    public function users()
     {
         return $this->belongsToMany(User::class);
+    }
+    public function salles()
+    {
+        return $this->belongsToMany(Salle::class);
+    }
+    public function classes()
+    {
+        return $this->belongsToMany(Classe::class);
+    }
+
+    public function remarques() { 
+        return $this->hasMany(Remarque::class); 
+    } 
+
+    public function matiere() { 
+        return $this->belongsTo(Matiere::class); 
     }
 }

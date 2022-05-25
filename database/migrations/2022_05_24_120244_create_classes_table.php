@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('classes', function (Blueprint $table) {
-            $table->id();
-            $table->integer('filiere_id')->unsigned();
+            $table->string('id')->primary();
+            $table->string('filiere_id');
             $table->foreign('filiere_id')
             ->references('id')
             ->on('filieres')

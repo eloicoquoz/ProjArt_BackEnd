@@ -18,9 +18,9 @@ return new class extends Migration
             $table->string('Titre');
             $table->string('Description');
             $table->string('Visibilite');
-            $table->integer('user_id')->unsigned();
-            $table->foreign('user_id')
-            ->references('id')
+            $table->string('user_Email');
+            $table->foreign('user_Email')
+            ->references('Email')
             ->on('users')
             ->onDelete('restrict')
             ->onUpdate('restrict');

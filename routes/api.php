@@ -32,3 +32,6 @@ Route::get('/pdo', function () {
 	$result = $myPDO->query("SELECT * FROM users ORDER BY id ASC ");
     return $result->fetchAll();
 });
+
+
+

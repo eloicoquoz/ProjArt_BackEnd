@@ -19,4 +19,12 @@ class Classe extends Model
         return $this->belongsToMany(Cours::class);
     }
 
+    public function destinataires() { 
+        return $this->hasMany(Destinataire::class); 
+    } 
+
+    public function filiere() { 
+        return $this->belongsTo(Filiere::class); 
+    }
+
 }

@@ -14,9 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('user_cours', function (Blueprint $table) {
-            $table->integer('user_id')->unsigned();
             $table->integer('cours_id')->unsigned();
-            $table->foreign('user_id')->references('id')->on('users')
+            $table->string('user_Email');
+            $table->foreign('user_Email')
+            ->references('Email')
+            ->on('users')
             ->onDelete('restrict')
             ->onUpdate('restrict');
             $table->foreign('cours_id')->references('id')->on('cours')

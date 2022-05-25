@@ -14,12 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('role_user', function (Blueprint $table) {
-            $table->integer('role_id')->unsigned();
-            $table->integer('user_id')->unsigned();
+            $table->string('role_id');
             $table->foreign('role_id')->references('id')->on('roles')
             ->onDelete('restrict')
             ->onUpdate('restrict');
-            $table->foreign('user_id')->references('id')->on('users')
+            $table->string('user_Email');
+            $table->foreign('user_Email')
+            ->references('Email')
+            ->on('users')
             ->onDelete('restrict')
             ->onUpdate('restrict');
         });

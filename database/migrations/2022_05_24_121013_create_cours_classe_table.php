@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('cours_classe', function (Blueprint $table) {
             $table->integer('cours_id')->unsigned();
-            $table->integer('classe_id')->unsigned();
+            $table->string('classe_id');
             $table->foreign('cours_id')->references('id')->on('cours')
             ->onDelete('restrict')
             ->onUpdate('restrict');

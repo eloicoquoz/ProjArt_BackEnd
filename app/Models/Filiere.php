@@ -8,4 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class Filiere extends Model
 {
     use HasFactory;
+
+    public function classes() { 
+        return $this->hasMany(Classe::class); 
+    } 
+
+    public function destinataires() { 
+        return $this->hasMany(Destinataire::class); 
+    }  
 }
