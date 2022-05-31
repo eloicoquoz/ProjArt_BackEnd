@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Models\Event;
 use DB;
 
-class UserController extends Controller
+class EventController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,18 +15,32 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users=User::all();
-        return $users;
+        //
     }
 
-    public function ProfByCours($cours)
+    public function allEvent()
     {
-        return DB::table('users')
-        ->join('user_cours', 'users.Email', '=', 'user_cours.user_Email')
-        ->where('user_cours.cours_id', $cours, 1)
-        ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
-        ->where('role_user.role_id', 'Professeur', 1)
-        ->select('users.Nom', 'users.Prenom', 'users.Email')
+        return Event::orderBy('Debut', 'asc')->get();
+    }
+
+    public function EventById($id)
+    {
+        return Event::where('id', $id)->get();
+    }
+
+    public function EventByUser($user)
+    {
+        return Event::where('user_Email', $user)->get();
+    }
+
+    public function EventByRole($role)
+    {
+        return DB::table('events')
+        ->join('users', 'events.user_Email', '=', 'users.Email')
+        ->join('role_user', 'users.Email', '=', 'role_user.user_Email')
+        ->where('role_user.role_id', $role, 1)
+        ->orderBy('events.Debut', 'asc')
+        ->select('events.*')
         ->get();
     }
 

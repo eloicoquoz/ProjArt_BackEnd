@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Models\Remarque;
 use DB;
 
-class UserController extends Controller
+class RemarqueController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,20 +15,39 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users=User::all();
-        return $users;
+        //
     }
 
-    public function ProfByCours($cours)
+    public function allRemarque()
     {
-        return DB::table('users')
-        ->join('user_cours', 'users.Email', '=', 'user_cours.user_Email')
-        ->where('user_cours.cours_id', $cours, 1)
-        ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
-        ->where('role_user.role_id', 'Professeur', 1)
-        ->select('users.Nom', 'users.Prenom', 'users.Email')
+        return Remarque::orderBy('Date', 'asc')->get();
+    }
+
+    public function RemarqueById($id)
+    {
+        return Remarque::where('id', $id)->get();
+    }
+
+    public function RemarqueByUser($user)
+    {
+        return Remarque::where('user_Email', $user)->orderBy('Date', 'asc')->get();
+    }
+
+    
+    public function RemarqueByClasseByMatiere($classe,$matiere)
+    {
+        return DB::table('remarques')
+        ->join('cours', 'remarques.cours_id', '=', 'cours.id')
+        ->join('cours_classe', 'cours.id', '=', 'cours_classe.cours_id')
+        ->where('cours.matiere_id', $matiere, 1)
+        ->where('cours_classe.classe_id', $classe, 1)
+        ->where('remarques.Visibilite', 'public', 1)
+        ->orderBy('remarques.Date', 'asc')
+        ->select('remarques.*')
         ->get();
     }
+
+    
 
     /**
      * Show the form for creating a new resource.

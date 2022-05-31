@@ -14,7 +14,7 @@ class Remarque extends Model
     public function user() {
         return $this->belongsTo(User::class);
     } 
-    public function matieres() {
-        return $this->belongsTo(Matiere::class);
+    public function cours() {
+        return $this->belongsTo(Cours::class);
     } 
 }

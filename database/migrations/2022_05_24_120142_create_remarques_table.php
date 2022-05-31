@@ -25,10 +25,10 @@ return new class extends Migration
             ->on('users')
             ->onDelete('restrict')
             ->onUpdate('restrict');
-            $table->string('matiere_id')->unsigned();
-            $table->foreign('matiere_id')
+            $table->integer('cours_id')->unsigned();
+            $table->foreign('cours_id')
             ->references('id')
-            ->on('matieres')
+            ->on('cours')
             ->onDelete('restrict')
             ->onUpdate('restrict');
 

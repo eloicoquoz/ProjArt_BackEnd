@@ -201,7 +201,7 @@ class DatabaseSeeder extends Seeder
             'Visibilite'  => 'public',
             'Date' => '2022-06-01',
             'user_Email' => 'lucas.cuennet@heig-vd.ch',
-            'matiere_id' => 'ProjInt',
+            'cours_id' => 1,
         ]);
 
         DB::table('remarques')->insert([
@@ -210,7 +210,7 @@ class DatabaseSeeder extends Seeder
              'Visibilite'  => 'prive',
              'Date' => '2022-06-01',
              'user_Email' => 'alexia.leger@heig-vd.ch',
-             'matiere_id' => 'Stage',
+             'cours_id' => 3,
          ]);
 
          DB::table('matiere_user')->insert([
@@ -227,10 +227,39 @@ class DatabaseSeeder extends Seeder
             'cours_id' => 1,
             'user_Email' => 'stephane.sordet@heig-vd.ch',
          ]);
+         DB::table('user_cours')->insert([
+            'cours_id' => 3,
+            'user_Email' => 'stephane.sordet@heig-vd.ch',
+         ]);
+         DB::table('user_cours')->insert([
+            'cours_id' => 7,
+            'user_Email' => 'stephane.sordet@heig-vd.ch',
+         ]);
+         DB::table('user_cours')->insert([
+            'cours_id' => 13,
+            'user_Email' => 'stephane.sordet@heig-vd.ch',
+         ]);
+
+         DB::table('user_cours')->insert([
+            'cours_id' => 1,
+            'user_Email' => 'lucas.cuennet@heig-vd.ch',
+         ]);
+         DB::table('user_cours')->insert([
+            'cours_id' => 3,
+            'user_Email' => 'lucas.cuennet@heig-vd.ch',
+         ]);
+         DB::table('user_cours')->insert([
+            'cours_id' => 7,
+            'user_Email' => 'lucas.cuennet@heig-vd.ch',
+         ]);
+         DB::table('user_cours')->insert([
+            'cours_id' => 13,
+            'user_Email' => 'lucas.cuennet@heig-vd.ch',
+         ]);
 
          DB::table('user_classe')->insert([
             'classe_id' => 'IM49-1',
-            'user_Email' => 'alexia.leger@heig-vd.ch',
+            'user_Email' => 'lucas.cuennet@heig-vd.ch',
          ]);
 
          DB::table('user_classe')->insert([
