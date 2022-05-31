@@ -47,6 +47,9 @@ class User extends Authenticatable
     public function events() { 
         return $this->hasMany(Event::class); 
     } 
+    public function matieres() { 
+        return $this->belongsToMany(Matiere::class); 
+    }
 
     /**
      * The attributes that should be hidden for serialization.

@@ -9,6 +9,8 @@ class Classe extends Model
 {
     use HasFactory;
 
+    protected $fillable=['id'];
+
     public function users()
     {
         return $this->belongsToMany(User::class);
@@ -18,10 +20,6 @@ class Classe extends Model
     {
         return $this->belongsToMany(Cours::class);
     }
-
-    public function destinataires() { 
-        return $this->hasMany(Destinataire::class); 
-    } 
 
     public function filiere() { 
         return $this->belongsTo(Filiere::class); 

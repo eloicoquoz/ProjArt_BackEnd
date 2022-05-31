@@ -21,14 +21,42 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
          //\App\Models\User::factory(10)->create();
+        DB::table('destinataires')->delete();
+        DB::table('notifications')->delete();
+        DB::table('cours_classe')->delete();
+        DB::table('user_classe')->delete();
+        DB::table('user_cours')->delete();
+        DB::table('matiere_user')->delete();
+        DB::table('remarques')->delete();
+        DB::table('events')->delete();
         DB::table('role_user')->delete();
         DB::table('users')->delete();
         DB::table('roles')->delete();
+        DB::table('salle_cours')->delete();
         DB::table('cours')->delete();
         DB::table('classes')->delete();
         DB::table('filieres')->delete();
         DB::table('salles')->delete();
         DB::table('matieres')->delete();
+
+        DB::table('destinataires')->truncate();
+        DB::table('notifications')->truncate();
+        DB::table('cours_classe')->truncate();
+        DB::table('user_classe')->truncate();
+        DB::table('user_cours')->truncate();
+        DB::table('matiere_user')->truncate();
+        DB::table('remarques')->truncate();
+        DB::table('events')->truncate();
+        DB::table('role_user')->truncate();
+        DB::table('users')->truncate();
+        DB::table('roles')->truncate();
+        DB::table('salle_cours')->truncate();
+        DB::table('cours')->truncate();
+        DB::table('classes')->truncate();
+        DB::table('filieres')->truncate();
+        DB::table('salles')->truncate();
+        DB::table('matieres')->truncate();
+
         DB::table('filieres')->insert([
             'id' => 'COMEM',
         ]);
@@ -117,6 +145,7 @@ class DatabaseSeeder extends Seeder
         foreach ($matiere as &$value) {
             DB::table('matieres')->insert([
                 'id' => $value,
+                'Annee' => 1,
             ]);
         } 
 
@@ -162,7 +191,95 @@ class DatabaseSeeder extends Seeder
             }
             $i++;
         }
-            
+          
+        
+        DB::table('events')->insert([
+            'Titre' => 'Bal de fin',
+            'Debut' => '2022-06-01 18:00:00',
+            'Fin' => '2022-06-01 23:00:00',
+            'Description' => 'Bal de fin, organisé par l\'AGE',
+            'Lieu' => 'Melon coton',
+            'user_Email' => 'alexia.leger@heig-vd.ch',
+        ]);
+
+        DB::table('remarques')->insert([
+           'Titre' => 'Examen',
+            'Description' => 'Examen de fin d\'année',
+            'Visibilite'  => 'public',
+            'Date' => '2022-06-01',
+            'user_Email' => 'lucas.cuennet@heig-vd.ch',
+            'matiere_id' => 'ProjInt',
+        ]);
+
+        DB::table('remarques')->insert([
+            'Titre' => 'Rapport',
+             'Description' => 'Rapport de projet',
+             'Visibilite'  => 'prive',
+             'Date' => '2022-06-01',
+             'user_Email' => 'alexia.leger@heig-vd.ch',
+             'matiere_id' => 'Stage',
+         ]);
+
+         DB::table('matiere_user')->insert([
+            'matiere_id' => 'Stage',
+            'user_Email' => 'alexia.leger@heig-vd.ch',
+         ]);
+
+         DB::table('matiere_user')->insert([
+            'matiere_id' => 'ProjInt',
+            'user_Email' => 'lucas.cuennet@heig-vd.ch',
+         ]);
+
+         DB::table('user_cours')->insert([
+            'cours_id' => 1,
+            'user_Email' => 'stephane.sordet@heig-vd.ch',
+         ]);
+
+         DB::table('user_classe')->insert([
+            'classe_id' => 'IM49-1',
+            'user_Email' => 'alexia.leger@heig-vd.ch',
+         ]);
+
+         DB::table('user_classe')->insert([
+            'classe_id' => 'IM49-2',
+            'user_Email' => 'lucas.cuennet@heig-vd.ch',
+         ]);
+
+         DB::table('cours_classe')->insert([
+            'classe_id' => 'IM49-2',
+            'cours_id' => 1,
+         ]);
+         DB::table('cours_classe')->insert([
+            'classe_id' => 'IM49-2',
+            'cours_id' => 3,
+         ]);
+         DB::table('cours_classe')->insert([
+            'classe_id' => 'IM49-1',
+            'cours_id' => 7,
+         ]);
+    
+         DB::table('cours_classe')->insert([
+            'classe_id' => 'IM49-1',
+            'cours_id' => 13,
+         ]);
+
+         DB::table('notifications')->insert([
+            'Objet' => 'Rapport de projet',
+            'Message' => 'Vous avez un nouveau rapport de projet',
+            'EnvoiHeureDate' => '2022-06-01 18:00:00',
+            'user_Email' => 'eloi.coquoz@heig-vd.ch',
+         ]);
+
+         DB::table('destinataires')->insert([
+            'notification_id' => 1,
+            'user_Email' => 'lucas.cuennet@heig-vd.ch',
+         ]);
+
+         DB::table('destinataires')->insert([
+            'notification_id' => 1,
+            'user_Email' => 'alexia.leger@heig-vd.ch',
+         ]);
+    
     
     }
 }

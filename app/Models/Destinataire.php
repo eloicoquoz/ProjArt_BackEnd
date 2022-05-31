@@ -8,15 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Destinataire extends Model
 {
     use HasFactory;
-
-    public function filiere() { 
-        return $this->belongsTo(Filiere::class); 
-    }
-
-    public function classe() { 
-        return $this->belongsTo(Classe::class); 
-    }
-
+    
     public function user() { 
         return $this->belongsTo(User::class); 
     }

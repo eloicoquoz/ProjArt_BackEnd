@@ -14,19 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::create('destinataires', function (Blueprint $table) {
-            $table->string('classe_id');
-            $table->string('filiere_id');
             $table->integer('notification_id')->unsigned();
             $table->string('user_Email');
             $table->foreign('user_Email')
             ->references('Email')
             ->on('users')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
-            $table->foreign('classe_id')->references('id')->on('classes')
-            ->onDelete('restrict')
-            ->onUpdate('restrict');
-            $table->foreign('filiere_id')->references('id')->on('filieres')
             ->onDelete('restrict')
             ->onUpdate('restrict');
             $table->foreign('notification_id')->references('id')->on('notifications')

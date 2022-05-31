@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('matieres', function (Blueprint $table) {
             $table->string('id')->primary();
+            $table->integer('Annee');
         });
     }
 

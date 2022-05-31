@@ -13,25 +13,19 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('remarques', function (Blueprint $table) {
-            $table->id();
-            $table->string('Titre');
-            $table->string('Description');
-            $table->string('Visibilite');
-            $table->date('Date');
+        Schema::create('matiere_user', function (Blueprint $table) {
             $table->string('user_Email');
             $table->foreign('user_Email')
             ->references('Email')
             ->on('users')
             ->onDelete('restrict')
             ->onUpdate('restrict');
-            $table->string('matiere_id')->unsigned();
+            $table->string('matiere_id');
             $table->foreign('matiere_id')
             ->references('id')
             ->on('matieres')
             ->onDelete('restrict')
             ->onUpdate('restrict');
-
         });
     }
 
@@ -42,6 +36,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('remarques');
+        Schema::dropIfExists('matiere_user');
     }
 };
