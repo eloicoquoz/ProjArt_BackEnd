@@ -9,11 +9,9 @@ class Filiere extends Model
 {
     use HasFactory;
 
+    protected $fillable=['id'];
+
     public function classes() { 
         return $this->hasMany(Classe::class); 
     } 
-
-    public function destinataires() { 
-        return $this->hasMany(Destinataire::class); 
-    }  
 }

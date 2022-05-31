@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HoraireController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CoursController;
+use App\Http\Controllers\ClasseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +21,33 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//Route::get('/horaires', [HoraireController::class, 'index']);
 
-Route::get('/users', [HoraireController::class, 'index']);
+Route::get('/users', [UserController::class, 'index']);
+
+// Get all cours
+Route::get('/cours', [CoursController::class, 'allCours']);
+
+// Get all cours all information
+Route::get('/cours/info', [CoursController::class, 'allCoursInfo']);
+
+// Get cours by id Information
+Route::get('/cours/info/{id}', [CoursController::class, 'CoursByIdInfo']);
+
+// Get Salle de cours
+Route::get('/cours/salle', [CoursController::class, 'SalleByCours']);
+
+// Get cours by matiere
+Route::get('/cours/matiere/{matiere}', [CoursController::class, 'CoursByMatiere']);
+
+// Get cours by id
+Route::get('/cours/id/{id}', [CoursController::class, 'CoursById']);
+
+// Get all classes
+Route::get('/classes', [ClasseController::class, 'allClasse']);
+
+// Get all classes by filiere
+Route::get('/classes/filiere/{filiere}', [ClasseController::class, 'ClasseByFiliere']);
+
 
 Route::get('/php', function () {
     return phpinfo();

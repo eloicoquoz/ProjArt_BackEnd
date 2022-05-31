@@ -9,6 +9,8 @@ class Salle extends Model
 {
     use HasFactory;
 
+    protected $fillable=['id'];
+
     public function cours()
     {
         return $this->belongsToMany(Cours::class);
