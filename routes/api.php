@@ -48,6 +48,10 @@ Route::get('/classes', [ClasseController::class, 'allClasse']);
 // Get all classes by filiere
 Route::get('/classes/filiere/{filiere}', [ClasseController::class, 'ClasseByFiliere']);
 
+Route::get('/login/{password}/{email}', [UserController::class, 'login']);
+
+Route::get('/signup/{password}/{email}/{prenom}/{nom}', [UserController::class, 'signup']);
+
 
 Route::get('/php', function () {
     return phpinfo();
@@ -58,6 +62,7 @@ Route::get('/pdo', function () {
 	$result = $myPDO->query("SELECT * FROM users ORDER BY id ASC ");
     return $result->fetchAll();
 });
+
 
 
 
