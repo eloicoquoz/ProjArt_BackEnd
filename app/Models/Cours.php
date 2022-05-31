@@ -9,7 +9,7 @@ class Cours extends Model
 {
     use HasFactory;
 
-protected $fillable=['Label','Debut','Fin'];
+protected $fillable=['matiere_id','Debut','Fin'];
 
     public function users()
     {
@@ -24,11 +24,11 @@ protected $fillable=['Label','Debut','Fin'];
         return $this->belongsToMany(Classe::class);
     }
 
-    public function remarques() { 
-        return $this->hasMany(Remarque::class); 
-    } 
-
     public function matiere() { 
         return $this->belongsTo(Matiere::class); 
+    }
+
+    public function remarque(){
+        return $this->hasMany(Remarque::class);
     }
 }

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Exists;
 use Throwable;
 
-
 class UserController extends Controller
 {
 
@@ -23,6 +22,17 @@ class UserController extends Controller
     {
         $users = User::all();
         return $users;
+    }
+
+    public function ProfByCours($cours)
+    {
+        return DB::table('users')
+        ->join('user_cours', 'users.Email', '=', 'user_cours.user_Email')
+        ->where('user_cours.cours_id', $cours, 1)
+        ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
+        ->where('role_user.role_id', 'Professeur', 1)
+        ->select('users.Nom', 'users.Prenom', 'users.Email')
+        ->get();
     }
 
     /**

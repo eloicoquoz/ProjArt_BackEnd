@@ -19,7 +19,5 @@ class Matiere extends Model
         return $this->belongsToMany(User::class); 
     }
 
-    public function remarque(){
-        return $this->hasMany(Remarque::class);
-    }
+   
 }
