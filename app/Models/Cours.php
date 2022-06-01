@@ -24,11 +24,11 @@ protected $fillable=['matiere_id','Debut','Fin'];
         return $this->belongsToMany(Classe::class);
     }
 
-    public function remarques() { 
-        return $this->hasMany(Remarque::class); 
-    } 
-
     public function matiere() { 
         return $this->belongsTo(Matiere::class, 'matiere_id'); 
+    }
+
+    public function remarque(){
+        return $this->hasMany(Remarque::class);
     }
 }
