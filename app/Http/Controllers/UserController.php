@@ -31,11 +31,11 @@ class UserController extends Controller
     public function ProfByCours($cours)
     {
         return DB::table('users')
-            ->join('user_cours', 'users.Email', '=', 'user_cours.user_Email')
-            ->where('user_cours.cours_id', $cours, 1)
+            ->join('cours_user', 'users.Email', '=', 'cours_user.user_Email')
+            ->where('cours_user.cours_id', $cours, 1)
             ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
             ->where('role_user.role_id', 'Professeur', 1)
-            ->select('users.Nom', 'users.Prenom', 'users.Email')
+            ->select('users.FullName', 'users.Email')
             ->get();
     }
 

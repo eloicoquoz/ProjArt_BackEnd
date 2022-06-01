@@ -23,41 +23,41 @@ class DatabaseSeeder extends Seeder
          //\App\Models\User::factory(10)->create();
         DB::table('destinataires')->delete();
         DB::table('notifications')->delete();
-        DB::table('cours_classe')->delete();
-        DB::table('user_classe')->delete();
-        DB::table('user_cours')->delete();
+        DB::table('classe_cours')->delete();
+        DB::table('classe_user')->delete();
+        DB::table('cours_user')->delete();
         DB::table('matiere_user')->delete();
         DB::table('remarques')->delete();
         DB::table('events')->delete();
         DB::table('role_user')->delete();
         DB::table('users')->delete();
         DB::table('roles')->delete();
-        DB::table('salle_cours')->delete();
+        DB::table('cours_salle')->delete();
         DB::table('cours')->delete();
         DB::table('classes')->delete();
-        DB::table('filieres')->delete();
+        DB::table('departements')->delete();
         DB::table('salles')->delete();
         DB::table('matieres')->delete();
 
         DB::table('destinataires')->truncate();
         DB::table('notifications')->truncate();
-        DB::table('cours_classe')->truncate();
-        DB::table('user_classe')->truncate();
-        DB::table('user_cours')->truncate();
+        DB::table('classe_cours')->truncate();
+        DB::table('classe_user')->truncate();
+        DB::table('cours_user')->truncate();
         DB::table('matiere_user')->truncate();
         DB::table('remarques')->truncate();
         DB::table('events')->truncate();
         DB::table('role_user')->truncate();
         DB::table('users')->truncate();
         DB::table('roles')->truncate();
-        DB::table('salle_cours')->truncate();
+        DB::table('cours_salle')->truncate();
         DB::table('cours')->truncate();
         DB::table('classes')->truncate();
-        DB::table('filieres')->truncate();
+        DB::table('departements')->truncate();
         DB::table('salles')->truncate();
         DB::table('matieres')->truncate();
 
-        DB::table('filieres')->insert([
+        DB::table('departements')->insert([
             'id' => 'COMEM',
         ]);
         DB::table('roles')->insert([
@@ -130,7 +130,7 @@ class DatabaseSeeder extends Seeder
         foreach ($liste as &$value) {
             DB::table('classes')->insert([
                 'id' => $value,
-                'filiere_id' => 'COMEM',
+                'departement_id' => 'COMEM',
             ]);
         } 
 
@@ -175,11 +175,9 @@ class DatabaseSeeder extends Seeder
             $roomExplode = explode (",", $mydata->room);
             $trimmed_myArray = array_filter(array_map('trim',$roomExplode));
             foreach($trimmed_myArray as $room) {
-            DB::table('salle_cours')->insert([
+            DB::table('cours_salle')->insert([
                 'salle_id' => $room,
                 'cours_id' => $i,
-                'Debut' => $start,
-                'Fin' => $end,
             ]);
             }
             $i++;
@@ -223,64 +221,64 @@ class DatabaseSeeder extends Seeder
             'user_Email' => 'lucas.cuennet@heig-vd.ch',
          ]);
 
-         DB::table('user_cours')->insert([
+         DB::table('cours_user')->insert([
             'cours_id' => 1,
             'user_Email' => 'stephane.sordet@heig-vd.ch',
          ]);
-         DB::table('user_cours')->insert([
+         DB::table('cours_user')->insert([
             'cours_id' => 3,
             'user_Email' => 'stephane.sordet@heig-vd.ch',
          ]);
-         DB::table('user_cours')->insert([
+         DB::table('cours_user')->insert([
             'cours_id' => 7,
             'user_Email' => 'stephane.sordet@heig-vd.ch',
          ]);
-         DB::table('user_cours')->insert([
+         DB::table('cours_user')->insert([
             'cours_id' => 13,
             'user_Email' => 'stephane.sordet@heig-vd.ch',
          ]);
 
-         DB::table('user_cours')->insert([
+         DB::table('cours_user')->insert([
             'cours_id' => 1,
             'user_Email' => 'lucas.cuennet@heig-vd.ch',
          ]);
-         DB::table('user_cours')->insert([
+         DB::table('cours_user')->insert([
             'cours_id' => 3,
             'user_Email' => 'lucas.cuennet@heig-vd.ch',
          ]);
-         DB::table('user_cours')->insert([
+         DB::table('cours_user')->insert([
             'cours_id' => 7,
             'user_Email' => 'lucas.cuennet@heig-vd.ch',
          ]);
-         DB::table('user_cours')->insert([
+         DB::table('cours_user')->insert([
             'cours_id' => 13,
             'user_Email' => 'lucas.cuennet@heig-vd.ch',
          ]);
 
-         DB::table('user_classe')->insert([
+         DB::table('classe_user')->insert([
             'classe_id' => 'IM49-1',
             'user_Email' => 'lucas.cuennet@heig-vd.ch',
          ]);
 
-         DB::table('user_classe')->insert([
+         DB::table('classe_user')->insert([
             'classe_id' => 'IM49-2',
             'user_Email' => 'lucas.cuennet@heig-vd.ch',
          ]);
 
-         DB::table('cours_classe')->insert([
+         DB::table('classe_cours')->insert([
             'classe_id' => 'IM49-2',
             'cours_id' => 1,
          ]);
-         DB::table('cours_classe')->insert([
+         DB::table('classe_cours')->insert([
             'classe_id' => 'IM49-2',
             'cours_id' => 3,
          ]);
-         DB::table('cours_classe')->insert([
+         DB::table('classe_cours')->insert([
             'classe_id' => 'IM49-1',
             'cours_id' => 7,
          ]);
     
-         DB::table('cours_classe')->insert([
+         DB::table('classe_cours')->insert([
             'classe_id' => 'IM49-1',
             'cours_id' => 13,
          ]);

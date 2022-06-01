@@ -38,13 +38,13 @@ class CoursController extends Controller
     public function allCoursInfo()
     {
         return DB::table('cours')
-        ->leftJoin('salle_cours', 'cours.id', '=', 'salle_cours.cours_id')
-        ->leftJoin('user_cours', 'cours.id', '=', 'user_cours.cours_id')
-        ->leftJoin('users', 'users.Email', '=', 'user_cours.user_Email')
+        ->leftJoin('cours_salle', 'cours.id', '=', 'cours_salle.cours_id')
+        ->leftJoin('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+        ->leftJoin('users', 'users.Email', '=', 'cours_user.user_Email')
         ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
         ->where('role_user.role_id', 'Professeur', 1)
         ->orWhere('role_user.role_id', null, 1)
-        ->select('cours.*', 'salle_cours.salle_id', 'users.Nom', 'users.Prenom', 'role_user.role_id')
+        ->select('cours.*', 'cours_salle.salle_id', 'users.FullName', 'role_user.role_id')
         ->orderBy('cours.Debut', 'asc')
         ->get();
     }
@@ -70,21 +70,21 @@ class CoursController extends Controller
     {    
         $query1 = DB::table('cours')
         ->where('cours.id', $id, 1)
-        ->leftJoin('salle_cours', 'cours.id', '=', 'salle_cours.cours_id')
-        ->leftJoin('user_cours', 'cours.id', '=', 'user_cours.cours_id')
-        ->leftJoin('users', 'users.Email', '=', 'user_cours.user_Email')
+        ->leftJoin('cours_salle', 'cours.id', '=', 'cours_salle.cours_id')
+        ->leftJoin('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+        ->leftJoin('users', 'users.Email', '=', 'cours_user.user_Email')
         ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
         ->where('role_user.role_id', 'Professeur', 1)
-        ->select('cours.*', 'salle_cours.salle_id', 'users.Nom', 'users.Prenom', 'role_user.role_id');
+        ->select('cours.*', 'cours_salle.salle_id', 'users.FullName', 'role_user.role_id');
 
         $query2 = DB::table('cours')
         ->where('cours.id', $id, 1)
-        ->leftJoin('salle_cours', 'cours.id', '=', 'salle_cours.cours_id')
-        ->leftJoin('user_cours', 'cours.id', '=', 'user_cours.cours_id')
-        ->leftJoin('users', 'users.Email', '=', 'user_cours.user_Email')
+        ->leftJoin('cours_salle', 'cours.id', '=', 'cours_salle.cours_id')
+        ->leftJoin('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+        ->leftJoin('users', 'users.Email', '=', 'cours_user.user_Email')
         ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
         ->where('role_user.role_id', null, 1)
-        ->select('cours.*', 'salle_cours.salle_id', 'users.Nom', 'users.Prenom', 'role_user.role_id')
+        ->select('cours.*', 'cours_salle.salle_id', 'users.FullName', 'role_user.role_id')
         ->union($query1)
         ->get();
 
@@ -101,15 +101,15 @@ class CoursController extends Controller
     public function CoursByClasse($classe)
     {
         return DB::table('cours')
-        ->leftJoin('salle_cours', 'cours.id', '=', 'salle_cours.cours_id')
-        ->join('cours_classe', 'cours.id', '=', 'cours_classe.cours_id')
-        ->leftJoin('user_cours', 'cours.id', '=', 'user_cours.cours_id')
-        ->leftJoin('users', 'users.Email', '=', 'user_cours.user_Email')
+        ->leftJoin('cours_salle', 'cours.id', '=', 'cours_salle.cours_id')
+        ->join('classe_cours', 'cours.id', '=', 'classe_cours.cours_id')
+        ->leftJoin('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+        ->leftJoin('users', 'users.Email', '=', 'cours_user.user_Email')
         ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
-        ->where('cours_classe.classe_id', $classe, 1)
+        ->where('classe_cours.classe_id', $classe, 1)
         ->where('role_user.role_id', 'Professeur', 1)
         ->orderBy('cours.Debut', 'asc')
-        ->select('cours.*', 'salle_cours.salle_id', 'users.Nom', 'users.Prenom', 'role_user.role_id')
+        ->select('cours.*', 'cours_salle.salle_id', 'users.FullName', 'role_user.role_id')
         ->get();
     }
 
@@ -121,16 +121,16 @@ class CoursController extends Controller
     public function CoursByClasseByMatiere($classe, $matiere)
     {
         return DB::table('cours')
-        ->leftJoin('salle_cours', 'cours.id', '=', 'salle_cours.cours_id')
-        ->join('cours_classe', 'cours.id', '=', 'cours_classe.cours_id')
-        ->leftJoin('user_cours', 'cours.id', '=', 'user_cours.cours_id')
-        ->leftJoin('users', 'users.Email', '=', 'user_cours.user_Email')
+        ->leftJoin('cours_salle', 'cours.id', '=', 'cours_salle.cours_id')
+        ->join('classe_cours', 'cours.id', '=', 'classe_cours.cours_id')
+        ->leftJoin('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+        ->leftJoin('users', 'users.Email', '=', 'cours_user.user_Email')
         ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
-        ->where('cours_classe.classe_id', $classe, 1)
+        ->where('classe_cours.classe_id', $classe, 1)
         ->where('role_user.role_id', 'Professeur', 1)
         ->where('cours.matiere_id', $matiere, 1)
         ->orderBy('cours.Debut', 'asc')
-        ->select('cours.*', 'salle_cours.salle_id', 'users.Nom', 'users.Prenom', 'role_user.role_id')
+        ->select('cours.*', 'cours_salle.salle_id', 'users.FullName', 'role_user.role_id')
         ->get();
     }
 
@@ -142,12 +142,12 @@ class CoursController extends Controller
     public function CoursByUser($user)
     {
         return DB::table('cours')
-        ->leftJoin('salle_cours', 'cours.id', '=', 'salle_cours.cours_id')
-        ->join('user_cours', 'cours.id', '=', 'user_cours.cours_id')
-        ->leftJoin('users', 'users.Email', '=', 'user_cours.user_Email')
+        ->leftJoin('cours_salle', 'cours.id', '=', 'cours_salle.cours_id')
+        ->join('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+        ->leftJoin('users', 'users.Email', '=', 'cours_user.user_Email')
         ->where('users.Email', $user, 1)
         ->orderBy('cours.Debut', 'asc')
-        ->select('cours.*', 'salle_cours.salle_id', 'users.Nom', 'users.Prenom')
+        ->select('cours.*', 'cours_salle.salle_id', 'users.FullName')
         ->get();
     }
 
@@ -159,13 +159,13 @@ class CoursController extends Controller
     public function CoursByUserByMatiere($user, $matiere)
     {
         return DB::table('cours')
-        ->leftJoin('salle_cours', 'cours.id', '=', 'salle_cours.cours_id')
-        ->join('user_cours', 'cours.id', '=', 'user_cours.cours_id')
-        ->leftJoin('users', 'users.Email', '=', 'user_cours.user_Email')
+        ->leftJoin('cours_salle', 'cours.id', '=', 'cours_salle.cours_id')
+        ->join('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+        ->leftJoin('users', 'users.Email', '=', 'cours_user.user_Email')
         ->where('users.Email', $user, 1)
         ->where('cours.matiere_id', $matiere, 1)
         ->orderBy('cours.Debut', 'asc')
-        ->select('cours.*', 'salle_cours.salle_id', 'users.Nom', 'users.Prenom')
+        ->select('cours.*', 'cours_salle.salle_id', 'users.FullName')
         ->get();
     }
 
@@ -177,9 +177,9 @@ class CoursController extends Controller
     public function ProfByUserByMatiere($user, $matiere)
     {
         $allCours = DB::table('cours')
-        ->leftJoin('salle_cours', 'cours.id', '=', 'salle_cours.cours_id')
-        ->join('user_cours', 'cours.id', '=', 'user_cours.cours_id')
-        ->leftJoin('users', 'users.Email', '=', 'user_cours.user_Email')
+        ->leftJoin('cours_salle', 'cours.id', '=', 'cours_salle.cours_id')
+        ->join('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+        ->leftJoin('users', 'users.Email', '=', 'cours_user.user_Email')
         ->where('users.Email', $user, 1)
         ->where('cours.matiere_id', $matiere, 1)
         ->orderBy('cours.Debut', 'asc')
@@ -200,7 +200,7 @@ class CoursController extends Controller
      */
     public function SalleByCours()
     {
-        return DB::table('salle_cours')->get();
+        return DB::table('cours_salle')->get();
     }
 
     /**

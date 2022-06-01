@@ -62,7 +62,7 @@ class RemarqueController extends Controller
 
         $query2 = DB::table('remarques')
         ->join('cours', 'remarques.cours_id', '=', 'cours.id')
-        ->join('user_cours', 'cours.id', '=', 'user_cours.cours_id')
+        ->join('cours_user', 'cours.id', '=', 'cours_user.cours_id')
         ->where('cours.matiere_id', $matiere, 1)
         ->where('remarques.user_Email', $user, 1)
         ->where('remarques.Visibilite', 'prive', 1)
@@ -86,9 +86,9 @@ class RemarqueController extends Controller
     {
         return DB::table('remarques')
         ->join('cours', 'remarques.cours_id', '=', 'cours.id')
-        ->join('cours_classe', 'cours.id', '=', 'cours_classe.cours_id')
+        ->join('classe_cours', 'cours.id', '=', 'classe_cours.cours_id')
         ->where('cours.matiere_id', $matiere, 1)
-        ->where('cours_classe.classe_id', $classe, 1)
+        ->where('classe_cours.classe_id', $classe, 1)
         ->where('remarques.Visibilite', 'public', 1)
         ->orderBy('remarques.Date', 'asc')
         ->select('remarques.*')
