@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\Salle;
+use App\Models\Classe;
+use App\Models\Matiere;
+use App\Models\Remarque;
 
 class Cours extends Model
 {

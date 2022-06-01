@@ -104,15 +104,15 @@ class UserController extends Controller
     public function login($password, $email)
     {
 
-        if (User::where('email', '=', $email)->exists()) {
-            $user = User::where('email', '=', $email)->first();
+        if (User::where('Email', '=', $email)->exists()) {
+            $user = User::where('Email', '=', $email)->first();
             if (Hash::check($password, $user->Password)) {
                 echo ('user found and connected');
             } else {
                 echo ('user not found : error in password or username');
             }
         }else{
-            echo ('account is not created');
+            signup($email, $password);
         }
     }
 
@@ -121,7 +121,7 @@ class UserController extends Controller
     {
 
 
-        if (User::where('email', '=', $email)->exists()) {
+        if (User::where('Email', '=', $email)->exists()) {
             echo ('user already exists, please log in');
         } else {
             echo ('user not found, to check on gaps');

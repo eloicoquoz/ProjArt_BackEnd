@@ -23,9 +23,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
-Route::get('/users', [UserController::class, 'index']);
-
 // Get all cours
 Route::get('/cours', [CoursController::class, 'allCours']);
 
@@ -50,6 +47,9 @@ Route::get('/remarque/id/{id}', [RemarqueController::class, 'RemarqueById']);
 // Get remarque by user
 Route::get('/remarque/user/{user}', [RemarqueController::class, 'RemarqueByUser']);
 
+// Get remarque by user by matiere
+Route::get('/remarque/user/{user}/{matiere}', [RemarqueController::class, 'RemarqueByUserByMatiere']);
+
 // Get remarque by classe by matiere
 Route::get('/remarque/classe/{classe}/{matiere}', [RemarqueController::class, 'RemarqueByClasseByMatiere']);
 
@@ -73,6 +73,9 @@ Route::get('/cours/user/{user}/{matiere}', [CoursController::class, 'CoursByUser
 
 // Get Salle de cours
 Route::get('/cours/salle', [CoursController::class, 'SalleByCours']);
+
+// Get Professeur by user by matiere
+Route::get('/cours/prof/{user}/{matiere}', [CoursController::class, 'ProfByUserByMatiere']);
 
 // Get cours by matiere
 Route::get('/cours/matiere/{matiere}', [CoursController::class, 'CoursByMatiere']);

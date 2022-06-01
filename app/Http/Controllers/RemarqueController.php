@@ -23,17 +23,65 @@ class RemarqueController extends Controller
         return Remarque::orderBy('Date', 'asc')->get();
     }
 
+    /**
+     * Voir un remarque par son id
+     *
+     * @return la remarque correspondante
+     */
     public function RemarqueById($id)
     {
         return Remarque::where('id', $id)->get();
     }
 
+    /**
+     * Voir toutes les remarques publiques ainsi que les remarques privés d'un utilisateur
+     *
+     * @return toutes remarques publiques et remarques privées d'un utilisateur
+     */
     public function RemarqueByUser($user)
     {
-        return Remarque::where('user_Email', $user)->orderBy('Date', 'asc')->get();
+        $result1 = Remarque::where('user_Email', $user)->where('Visibilite', 'prive')->orderBy('Date', 'asc')->cours()->get();
+        $result2 = Remarque::where('Visibilite', 'public')->orderBy('Date', 'asc')->get();
+        $result = $result1->merge($result2);
+        return $result;
     }
 
-    
+    /**
+     * Voir toutes les remarques publiques ainsi que les remarques privés d'un utilisateur en fonction d'une matière
+     *
+     * @return toutes remarques publiques et remarques privées d'un utilisateur en fonction de la matière
+     */
+    public function RemarqueByUserByMatiere($user,$matiere)
+    {
+
+        $query1 = DB::table('remarques')
+        ->join('cours', 'remarques.cours_id', '=', 'cours.id')
+        ->where('cours.matiere_id', $matiere, 1)
+        ->where('remarques.Visibilite', 'public', 1)
+        ->select('remarques.*');
+
+        $query2 = DB::table('remarques')
+        ->join('cours', 'remarques.cours_id', '=', 'cours.id')
+        ->join('user_cours', 'cours.id', '=', 'user_cours.cours_id')
+        ->where('cours.matiere_id', $matiere, 1)
+        ->where('remarques.user_Email', $user, 1)
+        ->where('remarques.Visibilite', 'prive', 1)
+        ->select('remarques.*')
+        ->union($query1)
+        ->orderBy('Date', 'asc')
+        ->get();
+
+        $result = $query2;
+
+        return $result;
+    }
+
+
+    /**
+     * Voir toutes les remarques publiques d'une classe en en fonction d'une matière
+     *
+     * @return toutes remarques publiques de la classe en fonction de la matière
+     */
     public function RemarqueByClasseByMatiere($classe,$matiere)
     {
         return DB::table('remarques')
