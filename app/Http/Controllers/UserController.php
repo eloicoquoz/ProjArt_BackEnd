@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Exists;
 use Throwable;
+use Illuminate\Support\Facades\Http;
+use DOMDocument;
+use DOMXPath;
+use Symfony\Component\CssSelector\XPath\XPathExpr;
 
 class UserController extends Controller
 {
@@ -27,12 +31,12 @@ class UserController extends Controller
     public function ProfByCours($cours)
     {
         return DB::table('users')
-        ->join('user_cours', 'users.Email', '=', 'user_cours.user_Email')
-        ->where('user_cours.cours_id', $cours, 1)
-        ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
-        ->where('role_user.role_id', 'Professeur', 1)
-        ->select('users.Nom', 'users.Prenom', 'users.Email')
-        ->get();
+            ->join('user_cours', 'users.Email', '=', 'user_cours.user_Email')
+            ->where('user_cours.cours_id', $cours, 1)
+            ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
+            ->where('role_user.role_id', 'Professeur', 1)
+            ->select('users.Nom', 'users.Prenom', 'users.Email')
+            ->get();
     }
 
     /**
@@ -111,52 +115,46 @@ class UserController extends Controller
             } else {
                 echo ('user not found : error in password or username');
             }
-        }else{
-            echo ('account is not created');
+        } else {
+            self::signup($password, $email);
         }
     }
 
 
-    public function signup($password, $email, $prenom, $nom)
+    public function signup($password, $email)
     {
+        $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . urlencode($email) . '&password=' . urlencode($password) . '&submit=Entrer';
+        $response = Http::get($url);
+        $dom = new DOMDocument();
+        @$dom->loadHTML($response->body());
+        $xpath = new DOMXPath($dom);
+        $nomPrenom = $xpath->query('/html/body/div[1]/div[6]/h3/a');
 
-
-        if (User::where('email', '=', $email)->exists()) {
-            echo ('user already exists, please log in');
+        if ($nomPrenom->length == 0) {
+            echo ('user not found on gaps, error in email or password');
         } else {
-            echo ('user not found, to check on gaps');
-            $path = "https://gaps.heig-vd.ch/consultation/elections/candidatures.php?login=" . $email . "&password=" . $password . "&submit=Entrer";
-            $ch = curl_init();
-            try {
-                curl_setopt($ch, CURLOPT_URL, $path);
-                curl_setopt($ch, CURLOPT_HEADER, true);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $nomEntier = $nomPrenom->item(0)->nodeValue;
 
-                $response = curl_exec($ch);
-                $fauxlogin = "class=\"fauxLogin\"";
-                $notLog = str_contains($response, $fauxlogin);
-            } catch (Throwable $th) {
-                throw $th;
-            } finally {
-                curl_close($ch);
-            }
+            echo ('user found on gaps and will be stored in DB');
 
-            if ($notLog) {
-                echo ('user not found on gaps, error in email or password');
-            } else {
-                DB::table('users')->insert([
-                    'Nom' => $nom,
-                    'Prenom' => $prenom,
-                    'Email' => $email,
-                    'Password' => Hash::make($password),
-                ]);
-
-                DB::table('role_user')->insert([
-                    'user_Email' => $email,
-                    'role_id' => 'Etudiant',
-                ]);
-                echo ('user  found on gaps and stored in DB');
-            }
+            self::storeUser($email, $password, $nomEntier);
         }
+    }
+
+
+
+    public function storeUser($email, $password, $nomEntier)
+    {
+        DB::table('users')->insert([
+            'FullName' => $nomEntier,
+            'Email' => $email,
+            'Password' => Hash::make($password),
+        ]);
+
+        DB::table('role_user')->insert([
+            'user_Email' => $email,
+            'role_id' => 'Etudiant',
+        ]);
+        echo ('user  found on gaps and stored in DB');
     }
 }
