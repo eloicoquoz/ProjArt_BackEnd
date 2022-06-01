@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Cours extends Model
 {
     use HasFactory;
-
+    public $timestamps = false;
 protected $fillable=['matiere_id','Debut','Fin'];
 
     public function users()
@@ -25,7 +25,7 @@ protected $fillable=['matiere_id','Debut','Fin'];
     }
 
     public function matiere() { 
-        return $this->belongsTo(Matiere::class); 
+        return $this->belongsTo(Matiere::class, 'matiere_id'); 
     }
 
     public function remarque(){

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Notification extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
     protected $fillable=['Objet','Message','EnvoiHeureDate'];
 

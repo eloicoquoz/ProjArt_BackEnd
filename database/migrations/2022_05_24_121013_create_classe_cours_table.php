@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('cours_classe', function (Blueprint $table) {
+        Schema::create('classe_cours', function (Blueprint $table) {
             $table->integer('cours_id')->unsigned();
             $table->string('classe_id');
             $table->foreign('cours_id')->references('id')->on('cours')
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cours_classe');
+        Schema::dropIfExists('classe_cours');
     }
 };

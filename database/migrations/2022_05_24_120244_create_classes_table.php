@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->string('filiere_id');
-            $table->foreign('filiere_id')
+            $table->string('departement_id');
+            $table->foreign('departement_id')
             ->references('id')
-            ->on('filieres')
+            ->on('departements')
             ->onDelete('restrict')
             ->onUpdate('restrict');
         });
