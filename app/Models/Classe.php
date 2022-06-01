@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Classe extends Model
 {
     use HasFactory;
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    public $timestamps = false;
 
-    protected $fillable=['id', 'filiere_id'];
+    protected $fillable=['id', 'departement_id'];
 
     public function users()
     {
@@ -21,8 +24,8 @@ class Classe extends Model
         return $this->belongsToMany(Cours::class);
     }
 
-    public function filiere() { 
-        return $this->belongsTo(Filiere::class, 'filiere_id');
+    public function departement() { 
+        return $this->belongsTo(Departement::class, 'departement_id');
     }
 
 }

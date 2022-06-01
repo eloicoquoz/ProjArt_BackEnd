@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('filieres', function (Blueprint $table) {
+        Schema::create('departements', function (Blueprint $table) {
             $table->string("id")->primary();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('filieres');
+        Schema::dropIfExists('departements');
     }
 };

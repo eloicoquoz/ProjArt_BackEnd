@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Destinataire extends Model
 {
     use HasFactory;
+    protected $primaryKey = null;
+    public $incrementing = false;
+    public $timestamps = false;
     
     public function user() { 
         return $this->belongsTo(User::class); 

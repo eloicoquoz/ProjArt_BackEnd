@@ -13,15 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_classe', function (Blueprint $table) {
-            $table->string('classe_id');
+        Schema::create('cours_user', function (Blueprint $table) {
+            $table->integer('cours_id')->unsigned();
             $table->string('user_Email');
             $table->foreign('user_Email')
             ->references('Email')
             ->on('users')
             ->onDelete('restrict')
             ->onUpdate('restrict');
-            $table->foreign('classe_id')->references('id')->on('classes')
+            $table->foreign('cours_id')->references('id')->on('cours')
             ->onDelete('restrict')
             ->onUpdate('restrict');
         });
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_classe');
+        Schema::dropIfExists('cours_user');
     }
 };

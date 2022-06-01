@@ -13,12 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_cours', function (Blueprint $table) {
+        Schema::create('cours_salle', function (Blueprint $table) {
+            $table->string('salle_id');
             $table->integer('cours_id')->unsigned();
-            $table->string('user_Email');
-            $table->foreign('user_Email')
-            ->references('Email')
-            ->on('users')
+            $table->foreign('salle_id')->references('id')->on('salles')
             ->onDelete('restrict')
             ->onUpdate('restrict');
             $table->foreign('cours_id')->references('id')->on('cours')
@@ -34,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_cours');
+        Schema::dropIfExists('cours_salle');
     }
 };
