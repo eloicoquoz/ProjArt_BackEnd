@@ -9,7 +9,7 @@ class Cours extends Model
 {
     use HasFactory;
 
-protected $fillable=['Label','Debut','Fin'];
+protected $fillable=['matiere_id','Debut','Fin'];
 
     public function users()
     {
@@ -29,6 +29,6 @@ protected $fillable=['Label','Debut','Fin'];
     } 
 
     public function matiere() { 
-        return $this->belongsTo(Matiere::class); 
+        return $this->belongsTo(Matiere::class, 'matiere_id'); 
     }
 }

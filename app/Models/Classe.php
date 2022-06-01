@@ -9,7 +9,7 @@ class Classe extends Model
 {
     use HasFactory;
 
-    protected $fillable=['id'];
+    protected $fillable=['id', 'filiere_id'];
 
     public function users()
     {
@@ -22,7 +22,7 @@ class Classe extends Model
     }
 
     public function filiere() { 
-        return $this->belongsTo(Filiere::class); 
+        return $this->belongsTo(Filiere::class, 'filiere_id');
     }
 
 }
