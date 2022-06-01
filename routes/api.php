@@ -91,7 +91,6 @@ Route::get('/classes/filiere/{filiere}', [ClasseController::class, 'ClasseByFili
 
 Route::get('/login/{password}/{email}', [UserController::class, 'login']);
 
-Route::get('/signup/{password}/{email}/{prenom}/{nom}', [UserController::class, 'signup']);
 // Get Prof by cours
 Route::get('/prof/cours/{cours}', [UserController::class, 'ProfByCours']);
 
