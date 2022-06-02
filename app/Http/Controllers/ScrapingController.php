@@ -16,7 +16,6 @@ class ScrapingController extends Controller
 {
     public function getPersonalTimetable($user, $pwd, $fullName)
     {
-        $date = date('m d');
         $year = date('Y');
         $trimestre = 1;
         if (strtotime('now') < strtotime('31 August')) {
@@ -234,7 +233,7 @@ class ScrapingController extends Controller
         $classesPersonne = array();
         foreach ($anneeClasse as $annee => $classe) {
             $annee--;
-            $nomClasse = 'IM' . idate('Y', $year) - $annee - 1971 . '-' . $classe;
+            $nomClasse = 'IM' . intval($year) - $annee - 1971 . '-' . $classe;
             $classesPersonne[] = $nomClasse;
         }
         $classesPersonne = array_unique($classesPersonne);
@@ -243,9 +242,9 @@ class ScrapingController extends Controller
 
     public function trouverClasseCours($lesson, $cours, $year)
     {
-        $anneeCours = ($cours->Annee) - 1;
-        $numeroClasse = ord(substr($lesson['label'], strpos($lesson['label'], '-') + 1, 1)) - ord('A') + 1;
-        $nomClasse = 'IM' . idate('Y', $year) - $anneeCours - 1971 . '-' . $numeroClasse;
+        $anneeCours = ($this->getYearForMatiere($cours->matiere_id)) - 1;
+        $numeroClasse = ord($lesson['class']) - ord('A') + 1;
+        $nomClasse = 'IM' . intval($year) - $anneeCours - 1971 . '-' . $numeroClasse;
         return $nomClasse;
     }
 
