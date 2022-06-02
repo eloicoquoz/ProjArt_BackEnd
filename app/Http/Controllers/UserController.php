@@ -61,9 +61,9 @@ class UserController extends Controller
         $user = User::where('Email', $email)->first();
         if (!$user) {
             $user = new User();
-            $user->email = $email;
-            $user->password = Hash::make($pwd);
-            $user->fullName = $fullName;
+            $user->Email = $email;
+            $user->Password = Hash::make($pwd);
+            $user->FullName = $fullName;
             $user->save();
         }
         return $user;
