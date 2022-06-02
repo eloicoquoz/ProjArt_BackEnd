@@ -7,6 +7,7 @@ use App\Http\Controllers\CoursController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\RemarqueController;
+use App\Http\Controllers\MatiereController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +95,9 @@ Route::get('/login/{password}/{email}', [UserController::class, 'login']);
 
 // Get Prof by cours
 Route::get('/prof/cours/{cours}', [UserController::class, 'ProfByCours']);
+
+// Get all Matiere
+Route::get('/matiere', [MatiereController::class, 'allMatiere']);
 
 
 

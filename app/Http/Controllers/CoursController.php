@@ -243,6 +243,11 @@ class CoursController extends Controller
         $cours->save();
     }
 
+    public function storeScrapping()
+    {
+
+    }
+
     /**
      * Display the specified resource.
      *

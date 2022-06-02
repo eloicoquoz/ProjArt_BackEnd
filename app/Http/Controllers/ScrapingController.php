@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use DOMXPath;
 use DOMDocument;
-use App\Models\User;
 use App\Models\Cours;
 use App\Models\Salle;
 use App\Models\Classe;
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Http;
 
 class ScrapingController extends Controller
 {
-    public function getPersonalTimetable($user = 'jules.sandoz@heig-vd.ch', $pwd = 'gUZw428u/S}^Jgff', $fullName = 'Sandoz Jules')
+    public function getPersonalTimetable($user, $pwd, $fullName)
     {
         $date = date('m d');
         $year = date('Y');
@@ -27,7 +26,7 @@ class ScrapingController extends Controller
             }
         }
 
-        $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . $user . '&password=' . $pwd . '&submit=Entrer&annee=' . $year . '&trimestre=' . $trimestre . '&type=2';
+        $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . urlencode($user) . '&password=' . urlencode($pwd) . '&submit=Entrer&annee=' . $year . '&trimestre=' . $trimestre . '&type=2';
         $response = Http::get($url);
         $dom = new DOMDocument();
         @$dom->loadHTML($response->body());
@@ -40,9 +39,7 @@ class ScrapingController extends Controller
             foreach ($weeklyLessons as $weeklyLesson) {
                 $lesson = $xpath->query(".//td", $weeklyLesson);
                 $lessonDate = $lesson->item(0)->nodeValue;
-                $lessonDate = substr($lessonDate, strpos($lessonDate, ' '));
-                $lessonDate = str_replace(' ', '', $lessonDate);
-                $lessonDate = explode(".", $lessonDate);
+                $lessonDate = explode(".", str_replace(' ', '', substr($lessonDate, strpos($lessonDate, ' '))));
                 $lessonDate = $lessonDate[2] . "-" . $lessonDate[1] . "-" . $lessonDate[0];
                 $lessonHours = $lesson->item(1)->nodeValue;
                 $lessonHours = str_replace(' ', '', substr($lessonHours, 0, strpos($lessonHours, '(')));
@@ -71,22 +68,14 @@ class ScrapingController extends Controller
             }
         }
         $matters = array_unique($matters);
-        $utilisateur = User::where('Email', $user)->first();
-        if(!$utilisateur){
-            $utilisateur = new User();
-            $utilisateur->Email = $user;
-            $utilisateur->Password = $pwd;
-            $utilisateur->FullName = $fullName;
-            $utilisateur->save();
-        }
+        $utilisateur = app('App\Http\Controllers\UserController')->store($user, $pwd, $fullName);
         $this->sauvegarderMatieres($user, $matters);
         $this->sauvegarderCours($user, $lessons, $year);
     }
 
     public function sauvegarderMatieres($email, $matters)
     {
-        $user = User::where('Email', $email)->first();
-
+        $user = app('App\Http\Controllers\UserController')->show($email);
         // $user->matieres()->detach();
         foreach ($matters as $matter) {
             $matiere = Matiere::where('id', $matter)->first();
@@ -105,7 +94,7 @@ class ScrapingController extends Controller
 
     public function sauvegarderCours($email, $lessons, $year)
     {
-        $user = User::where('Email', $email)->first();
+        $user = app('App\Http\Controllers\UserController')->show($email);
         // $user->cours()->detach();
         foreach ($lessons as $lesson) {
 
@@ -259,16 +248,6 @@ class ScrapingController extends Controller
         $nomClasse = 'IM' . idate('Y', $year) - $anneeCours - 1971 . '-' . $numeroClasse;
         return $nomClasse;
     }
-
-    // public function enregistrerClasseCours($lessons, $year)
-    // {
-    //     foreach ($lessons as $lesson) {
-    //         $nomMatiere = substr($lesson['label'], 0, strpos($lesson['label'], '-'));
-    //         if ($nomMatiere != 'Ang1' && $nomMatiere != 'Ang2') {
-    //             $anneeClasse[] = [$this->checkYear($nomMatiere) => ord(substr($lesson['label'], strpos($lesson['label'], '-') + 1, 1)) - ord('A') + 1];
-    //         }
-    //     }
-    // }
 
     public function checkYear($matter)
     {

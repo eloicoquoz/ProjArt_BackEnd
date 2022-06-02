@@ -42,9 +42,23 @@ class RemarqueController extends Controller
      */
     public function RemarqueByUser($user)
     {
-        $result1 = Remarque::where('user_Email', $user)->where('Visibilite', 'prive')->orderBy('Date', 'asc')->cours()->get();
-        $result2 = Remarque::where('Visibilite', 'public')->orderBy('Date', 'asc')->get();
-        $result = $result1->merge($result2);
+        $query1 = DB::table('remarques')
+        ->join('cours', 'remarques.cours_id', '=', 'cours.id')
+        ->where('remarques.Visibilite', 'public', 1)
+        ->select('remarques.*', 'cours.matiere_id');
+
+        $query2 = DB::table('remarques')
+        ->join('cours', 'remarques.cours_id', '=', 'cours.id')
+        ->join('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+        ->where('remarques.user_Email', $user, 1)
+        ->where('remarques.Visibilite', 'prive', 1)
+        ->select('remarques.*', 'cours.matiere_id')
+        ->union($query1)
+        ->orderBy('Date', 'asc')
+        ->get();
+
+        $result = $query2;
+
         return $result;
     }
 

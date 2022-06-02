@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\Rules\Exists;
-use Throwable;
-use Illuminate\Support\Facades\Http;
-use DOMDocument;
 use DOMXPath;
+use Throwable;
+use DOMDocument;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\Rules\Exists;
 use Symfony\Component\CssSelector\XPath\XPathExpr;
 
 class UserController extends Controller
@@ -55,9 +56,17 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store($email, $pwd, $fullName)
     {
-        //
+        $user = User::where('Email', $email)->first();
+        if (!$user) {
+            $user = new User();
+            $user->email = $email;
+            $user->password = Hash::make($pwd);
+            $user->fullName = $fullName;
+            $user->save();
+        }
+        return $user;
     }
 
     /**
@@ -66,9 +75,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($email)
     {
-        //
+        $user = User::where('Email', $email)->first();
+        return $user;
     }
 
     /**
@@ -138,6 +148,7 @@ class UserController extends Controller
             echo ('user found on gaps and will be stored in DB');
 
             self::storeUser($email, $password, $nomEntier);
+            app('App\Http\Controllers\ScrapingController')->getPersonalTimetable($email, $password, $nomPrenom);
         }
     }
 
@@ -145,6 +156,13 @@ class UserController extends Controller
 
     public function storeUser($email, $password, $nomEntier)
     {
+        $etudiant = Role::where('id', 'Etudiant')->first();
+        if (!$etudiant) {
+            $etudiant = new Role();
+            $etudiant->id = 'Etudiant';
+            $etudiant->save();
+        }
+
         DB::table('users')->insert([
             'FullName' => $nomEntier,
             'Email' => $email,
