@@ -58,7 +58,7 @@ class UserController extends Controller
      */
     public function store($email, $pwd, $fullName)
     {
-        $user = User::where('email', $email)->first();
+        $user = User::where('Email', $email)->first();
         if (!$user) {
             $user = new User();
             $user->email = $email;
@@ -77,7 +77,7 @@ class UserController extends Controller
      */
     public function show($email)
     {
-        $user = User::where('email', $email)->first();
+        $user = User::where('Email', $email)->first();
         return $user;
     }
 
