@@ -18,3 +18,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/gaps', [ScrapingController::class, 'getPersonalTimetable']);
+
+Route::resource('remarque', RemarqueController::class);

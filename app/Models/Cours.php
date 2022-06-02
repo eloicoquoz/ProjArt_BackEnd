@@ -14,7 +14,7 @@ class Cours extends Model
 {
     use HasFactory;
     public $timestamps = false;
-protected $fillable=['matiere_id','Debut','Fin'];
+    protected $fillable = ['matiere_id', 'Debut', 'Fin'];
 
     public function users()
     {
@@ -29,11 +29,14 @@ protected $fillable=['matiere_id','Debut','Fin'];
         return $this->belongsToMany(Classe::class);
     }
 
-    public function matiere() { 
-        return $this->belongsTo(Matiere::class, 'matiere_id'); 
+    public function matiere()
+    {
+        return $this->belongsTo(Matiere::class, 'matiere_id');
     }
 
-    public function remarque(){
+    public function remarque()
+    {
         return $this->hasMany(Remarque::class);
     }
+
 }

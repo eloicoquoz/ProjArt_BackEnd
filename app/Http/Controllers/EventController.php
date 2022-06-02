@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Event;
-use DB;
+use App\Models\Notification;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -62,7 +63,17 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $event = new Event();
+        $event->Titre = $request->Titre;
+        $event->Debut = $request->Debut;
+        $event->Fin = $request->Fin;
+        $event->Lieu = $request->Lieu;
+        $event->user_Email = $request->user_Email;
+        $event->Description = $request->Description;
+        $event->save();
+        $titre = "Nouvel évènement";
+        app('App\Http\Controllers\Notifications')->store($titre, $request->Titre);
+    
     }
 
     /**
@@ -96,7 +107,14 @@ class EventController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $event = Event::findOrFail($id);
+        $event->Titre = $request->Titre;
+        $event->Debut = $request->Debut;
+        $event->Fin = $request->Fin;
+        $event->Lieu = $request->Lieu;
+        $event->user_Email = $request->user_Email;
+        $event->Description = $request->Description;
+        $event->save();
     }
 
     /**
@@ -107,6 +125,8 @@ class EventController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $event = Event::findOrFail($id);
+        $event->delete();
+        return redirect()->back();
     }
 }

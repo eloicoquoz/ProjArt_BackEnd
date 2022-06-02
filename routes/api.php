@@ -90,6 +90,7 @@ Route::get('/classes', [ClasseController::class, 'allClasse']);
 // Get all classes by filiere
 Route::get('/classes/filiere/{filiere}', [ClasseController::class, 'ClasseByFiliere']);
 
+// Login & Signup
 Route::get('/login/{password}/{email}', [UserController::class, 'login']);
 
 // Get Prof by cours
@@ -97,6 +98,7 @@ Route::get('/prof/cours/{cours}', [UserController::class, 'ProfByCours']);
 
 // Get all Matiere
 Route::get('/matiere', [MatiereController::class, 'allMatiere']);
+
 
 
 Route::get('/php', function () {
