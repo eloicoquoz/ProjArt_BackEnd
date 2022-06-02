@@ -20,7 +20,7 @@ class EventController extends Controller
 
     public function allEvent()
     {
-        return Event::orderBy('Debut', 'asc')->get();
+        return Event::orderBy('Debut', 'asc')->user()->get();
     }
 
     public function EventById($id)
