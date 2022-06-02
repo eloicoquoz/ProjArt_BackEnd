@@ -249,16 +249,6 @@ class ScrapingController extends Controller
         return $nomClasse;
     }
 
-    // public function enregistrerClasseCours($lessons, $year)
-    // {
-    //     foreach ($lessons as $lesson) {
-    //         $nomMatiere = substr($lesson['label'], 0, strpos($lesson['label'], '-'));
-    //         if ($nomMatiere != 'Ang1' && $nomMatiere != 'Ang2') {
-    //             $anneeClasse[] = [$this->checkYear($nomMatiere) => ord(substr($lesson['label'], strpos($lesson['label'], '-') + 1, 1)) - ord('A') + 1];
-    //         }
-    //     }
-    // }
-
     public function checkYear($matter)
     {
         $matiere = Matiere::where('id', $matter)->first();
