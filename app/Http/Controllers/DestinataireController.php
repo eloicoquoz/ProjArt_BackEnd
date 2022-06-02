@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Notification;
-use DateTime;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
+use App\Models\Destinataire;
+use App\Models\Cours;
 
-class NotificationController extends Controller
+class DestinataireController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -24,7 +23,7 @@ class NotificationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
         //
     }
@@ -35,16 +34,15 @@ class NotificationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store($titre, $description,$user)
+    public function store($coursId, $notificationId)
     {
-        $date = date('Y-m-d H:i:s', strtotime(' + 2 hours'));
-        $notification = new Notification();
-        $notification->Objet = $titre;
-        $notification->Message = $description;
-        $notification->EnvoiHeureDate = $date;
-        $notification->user_Email = $user;
-        $notification->save();
-        return $notification;
+        $users = Cours::where('id', $coursId)->first()->users;
+        foreach ($users as $user) {
+            $destinataire = new Destinataire();
+            $destinataire->user_Email = $user->Email;
+            $destinataire->notification_id = $notificationId;
+            $destinataire->save();
+        }
     }
 
     /**
@@ -76,9 +74,9 @@ class NotificationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+       //
     }
 
     /**

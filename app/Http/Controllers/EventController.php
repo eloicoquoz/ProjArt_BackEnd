@@ -72,7 +72,7 @@ class EventController extends Controller
         $event->user_Email = $request->user_Email;
         $event->Description = $request->Description;
         $titre = "Nouvel évènement";
-        app('App\Http\Controllers\NotificationController')->store($titre, $request->Titre,$request->user_Email);
+        $notification = app('App\Http\Controllers\NotificationController')->store($titre, $request->Titre,$request->user_Email);
         $event->save();
     
     }

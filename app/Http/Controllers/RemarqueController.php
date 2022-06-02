@@ -133,6 +133,7 @@ class RemarqueController extends Controller
      */
     public function store(Request $request)
     {
+        $notification;
         $remarque = new Remarque();
         $remarque->Titre = $request->Titre;
         $remarque->Description = $request->Description;
@@ -146,14 +147,16 @@ class RemarqueController extends Controller
             $cours = Cours::findOrFail($request->cours_id);
             $matiere = Matiere::findOrFail($cours->matiere_id);
             $description = "Retard de " . $user->FullName . " pour le cours de " . $matiere->id. " du ".$cours->Debut;
-            app('App\Http\Controllers\NotificationController')->store($titre, $description,$request->user_Email);
+            $notification = app('App\Http\Controllers\NotificationController')->store($titre, $description,$request->user_Email);
+            app('App\Http\Controllers\DestinataireController')->store($request->cours_id, $notification->id);
         }elseif($request->Visibilite == "public"){
             $titre = "Nouvelle remarque";
             $user = User::findOrFail($request->user_Email);
             $cours = Cours::findOrFail($request->cours_id);
             $matiere = Matiere::findOrFail($cours->matiere_id);
             $description = "Nouvelle remarque de " . $user->FullName . " pour la matière suivante : " . $matiere->id;
-            app('App\Http\Controllers\NotificationController')->store($titre, $description,$request->user_Email);
+            $notification = app('App\Http\Controllers\NotificationController')->store($titre, $description,$request->user_Email);
+            app('App\Http\Controllers\DestinataireController')->store($request->cours_id, $notification->id);
         }
         $remarque->save();
     }
