@@ -234,6 +234,11 @@ class CoursController extends Controller
         //
     }
 
+    public function storeScrapping()
+    {
+
+    }
+
     /**
      * Display the specified resource.
      *
