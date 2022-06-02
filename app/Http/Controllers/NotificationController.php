@@ -35,12 +35,15 @@ class NotificationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store($titre, $description)
+    public function store($titre, $description,$user)
     {
+        $date = date('Y-m-d H:i:s', strtotime(' + 2 hours'));
         $notification = new Notification();
-        $notification->objet = $titre;
-        $notification->message = $description;
-        $notification->envoiHeureDate = new DateTime('now');
+        $notification->Objet = $titre;
+        $notification->Message = $description;
+        $notification->EnvoiHeureDate = $date;
+        $notification->user_Email = $user;
+        $notification->save();
     }
 
     /**

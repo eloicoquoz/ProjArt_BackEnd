@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Remarque;
 use App\Models\User;
+use App\Models\Cours;
+use App\Models\Matiere;
 use Illuminate\Support\Facades\DB;
 
 
@@ -138,17 +140,20 @@ class RemarqueController extends Controller
         $remarque->Date = $request->Date;
         $remarque->user_Email = $request->user_Email;
         $remarque->cours_id = $request->cours_id;
-        $remarque->save();
         if($request->Visibilite == "public" && $request->Titre=="retard"){
             $titre = "Annonce de retard";
             $user = User::findOrFail($request->user_Email);
-            $description = "Retard de " . $user->FullName . " pour le cours de " . $request->cours_id;
-            app('App\Http\Controllers\Notifications')->store($titre, $description);
+            $cours = Cours::findOrFail($request->cours_id);
+            $matiere = Matiere::findOrFail($cours->matiere_id);
+            $description = "Retard de " . $user->FullName . " pour le cours de " . $matiere->id. " du ".$cours->Debut;
+            app('App\Http\Controllers\NotificationController')->store($titre, $description,$request->user_Email);
         }elseif($request->Visibilite == "public"){
             $titre = "Nouvelle remarque";
             $user = User::findOrFail($request->user_Email);
-            $description = "Nouvelle remarque de " . $user->FullName . " pour le cours de " . $request->cours_id;
-            app('App\Http\Controllers\Notifications')->store($titre, $description);
+            $cours = Cours::findOrFail($request->cours_id);
+            $matiere = Matiere::findOrFail($cours->matiere_id);
+            $description = "Nouvelle remarque de " . $user->FullName . " pour la matière suivante : " . $matiere->id;
+            app('App\Http\Controllers\NotificationController')->store($titre, $description,$request->user_Email);
         }
         $remarque->save();
     }

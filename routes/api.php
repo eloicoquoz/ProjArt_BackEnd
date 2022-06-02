@@ -99,6 +99,12 @@ Route::get('/prof/cours/{cours}', [UserController::class, 'ProfByCours']);
 // Get all Matiere
 Route::get('/matiere', [MatiereController::class, 'allMatiere']);
 
+// Create Remarque
+Route::post('/remarque/create', [RemarqueController::class, 'store']);
+
+// Create Remarque
+Route::post('/event/create', [EventController::class, 'store']);
+
 
 
 Route::get('/php', function () {

@@ -19,4 +19,3 @@ Route::get('/', function () {
 });
 Route::get('/gaps', [ScrapingController::class, 'getPersonalTimetable']);
 
-Route::resource('remarque', RemarqueController::class);

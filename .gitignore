@@ -13,3 +13,4 @@ yarn-error.log
 /.idea
 /.vscode
 /database/database.sqlite
+/database/seeders/DatabaseSeeder.php

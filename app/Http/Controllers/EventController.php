@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
@@ -21,7 +22,7 @@ class EventController extends Controller
 
     public function allEvent()
     {
-        return Event::orderBy('Debut', 'asc')->user()->get();
+        return Event::orderBy('Debut', 'asc')->get();
     }
 
     public function EventById($id)
@@ -70,9 +71,9 @@ class EventController extends Controller
         $event->Lieu = $request->Lieu;
         $event->user_Email = $request->user_Email;
         $event->Description = $request->Description;
-        $event->save();
         $titre = "Nouvel évènement";
-        app('App\Http\Controllers\Notifications')->store($titre, $request->Titre);
+        app('App\Http\Controllers\NotificationController')->store($titre, $request->Titre,$request->user_Email);
+        $event->save();
     
     }
 
