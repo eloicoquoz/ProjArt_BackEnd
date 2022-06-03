@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use App\Models\Notification;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -22,7 +23,19 @@ class EventController extends Controller
 
     public function allEvent()
     {
-        return Event::orderBy('Debut', 'asc')->get();
+        $events = Event::orderBy('Debut', 'asc')->get();
+        //dd($events);
+        $eventRoles=array();
+        foreach ($events as $event) {
+            $user = User::findOrFail($event->user_Email);
+            $roles = $user->roles()->get();
+            $eventRoles[] = [
+                "event" => $event,
+                "roles" => $roles
+            ];
+        }
+        dd($eventRoles);
+        return $eventRoles;
     }
 
     public function EventById($id)
@@ -38,12 +51,12 @@ class EventController extends Controller
     public function EventByRole($role)
     {
         return DB::table('events')
-        ->join('users', 'events.user_Email', '=', 'users.Email')
-        ->join('role_user', 'users.Email', '=', 'role_user.user_Email')
-        ->where('role_user.role_id', $role, 1)
-        ->orderBy('events.Debut', 'asc')
-        ->select('events.*')
-        ->get();
+            ->join('users', 'events.user_Email', '=', 'users.Email')
+            ->join('role_user', 'users.Email', '=', 'role_user.user_Email')
+            ->where('role_user.role_id', $role, 1)
+            ->orderBy('events.Debut', 'asc')
+            ->select('events.*')
+            ->get();
     }
 
     /**
@@ -74,7 +87,6 @@ class EventController extends Controller
         $titre = "Nouvel évènement";
         $notification = app('App\Http\Controllers\NotificationController')->store($titre, $request->Titre,$request->user_Email);
         $event->save();
-    
     }
 
     /**

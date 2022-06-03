@@ -124,7 +124,7 @@ class UserController extends Controller
             if (Hash::check($password, $user->Password)) {
                 echo ('user found and connected');
             } else {
-                echo ('user not found : error in password or username');
+                echo ('user found : error in password or username');
             }
         } else {
             self::signup($password, $email);
@@ -146,7 +146,7 @@ class UserController extends Controller
         } else {
             $nomEntier = $nomPrenom->item(0)->nodeValue;
 
-            echo ('user found on gaps and will be stored in DB');
+            echo ("User found on gaps and will be stored in DB");
 
             self::storeUser($email, $password, $nomEntier);
             app('App\Http\Controllers\ScrapingController')->getPersonalTimetable($email, $password, $nomPrenom);
@@ -174,7 +174,7 @@ class UserController extends Controller
             'user_Email' => $email,
             'role_id' => 'Etudiant',
         ]);
-        echo ('user  found on gaps and stored in DB');
+        echo nl2br("\n stored in DB");
     }
 
     public function addRoleToUser($role, $email){
