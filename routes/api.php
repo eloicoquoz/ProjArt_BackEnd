@@ -4,10 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CoursController;
-use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\RemarqueController;
+use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\MatiereController;
+use App\Http\Controllers\RemarqueController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +105,9 @@ Route::post('/remarque/create', [RemarqueController::class, 'store']);
 
 // Create Remarque
 Route::post('/event/create', [EventController::class, 'store']);
+
+//Get all notifications with sender's roles for user 
+Route::get('/notifications/{user}', [NotificationController::class, 'getNotificationsForUser']);
 
 
 

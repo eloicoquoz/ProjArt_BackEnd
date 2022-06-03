@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Notification;
 use DateTime;
+use App\Models\User;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 
@@ -90,5 +91,25 @@ class NotificationController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getNotificationsForUser($email)
+    {
+        $notificationRoles = array();
+        $notificationsReceived = User::where('Email', $email)->first()->destinataires()->get('notification_id');
+        $notifications = array();
+        foreach ($notificationsReceived as $notificationReceived) {
+            $notifications[] = Notification::where('id', $notificationReceived->notification_id)->first();
+        }
+        foreach ($notifications as $notification) {
+            $rolesSender = User::where('Email', $notification->user_Email)->first()->roles()->get();
+            $rolesArray = array();
+            foreach ($rolesSender as $role) {
+                array_push($rolesArray, $role->id);
+            }
+            $notificationAndRoles = ['notification' => $notification, 'roles' => $rolesArray];
+            array_push($notificationRoles, $notificationAndRoles);
+        }
+        return $notificationRoles;
     }
 }

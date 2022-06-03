@@ -66,6 +66,7 @@ class UserController extends Controller
             $user->FullName = $fullName;
             $user->save();
         }
+        $this->addRoleToUser('Etudiant', $email);
         return $user;
     }
 
@@ -174,5 +175,18 @@ class UserController extends Controller
             'role_id' => 'Etudiant',
         ]);
         echo ('user  found on gaps and stored in DB');
+    }
+
+    public function addRoleToUser($role, $email){
+        $user = User::where('Email', $email)->first();
+        if ($user) {
+            $role = Role::where('id', $role)->first();
+            if (!$role) {
+                $role = new Role();
+                $role->id = $role;
+                $role->save();
+            }
+            $user->roles()->attach($role);
+        }
     }
 }

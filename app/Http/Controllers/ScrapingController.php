@@ -68,8 +68,9 @@ class ScrapingController extends Controller
         }
         $matters = array_unique($matters);
         $utilisateur = app('App\Http\Controllers\UserController')->store($user, $pwd, $fullName);
-        $this->sauvegarderMatieres($user, $matters);
-        $this->sauvegarderCours($user, $lessons, $year);
+        $this->sauvegarderMatieres($utilisateur->Email, $matters);
+        $this->sauvegarderCours($utilisateur->Email, $lessons, $year);
+        
     }
 
     public function sauvegarderMatieres($email, $matters)
