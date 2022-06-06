@@ -18,14 +18,24 @@ class ClasseController extends Controller
         //
     }
 
+    /**
+     * Recherche toutes les classes dans la base de données
+     *
+     * @return toutes les classes
+     */
     public function allClasse()
     {
         return DB::table('classes')->get();
     }
 
+    /**
+     * Recherche toutes les classes en fonction d'un département
+     *
+     * @return toutes les classes^d'un département
+     */
     public function ClasseByFiliere($filiere)
     {
-        return DB::table('classes')->select('id')->where('filiere_id', $filiere, 1)->get();
+        return DB::table('classes')->select('id')->where('departement_id', $filiere, 1)->get();
     }
 
     /**

@@ -29,6 +29,11 @@ class UserController extends Controller
         return $users;
     }
 
+    /**
+     * Voir les professeurs en fonction d'un cours
+     *
+     * @return listes des professeurs
+     */
     public function ProfByCours($cours)
     {
         return DB::table('users')
@@ -116,6 +121,12 @@ class UserController extends Controller
         //
     }
 
+    /**
+     * Fonction de login, recherche l'utilisateur dans la base de données. Si l'utilisateur existe au sein de la DB, on teste si le password correspond.
+     * Si l'utilisateur n'est pas dans la DB, on appelle la fonction signup pour créer un nouvel utilisateur.
+     *
+     * @return message
+     */
     public function login($password, $email)
     {
 
@@ -132,6 +143,12 @@ class UserController extends Controller
     }
 
 
+    /**
+     * Fonction de signup, crée un nouvel utilisateur dans la DB si l'utilisateur n'existe pas déjà. Cependant l''utilisateur doit posséder un compte sur GAPS avec les identifiants fournis.
+     * On teste sur GAPS avec les identifiants et on scrappe les données de la page retournée. Selon les données reçues, on crée un nouvel utilisateur dans la DB via la méthode storeUser.
+     *
+     * @return message
+     */
     public function signup($password, $email)
     {
         $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . urlencode($email) . '&password=' . urlencode($password) . '&submit=Entrer';
@@ -155,6 +172,11 @@ class UserController extends Controller
 
 
 
+    /**
+     * Fonction de création d'un nouvel utilisateur dans la DB.
+     *
+     * @return message
+     */
     public function storeUser($email, $password, $nomEntier)
     {
         $etudiant = Role::where('id', 'Etudiant')->first();
@@ -177,6 +199,10 @@ class UserController extends Controller
         echo nl2br("\n stored in DB");
     }
 
+    /**
+     * Fonction de création d'un role pour un utilisateur.
+     *
+     */
     public function addRoleToUser($role, $email){
         $user = User::where('Email', $email)->first();
         if ($user) {

@@ -93,6 +93,11 @@ class NotificationController extends Controller
         //
     }
 
+    /**
+     * Recherche les notifications d'un utilisateur
+     *
+     * @return liste des notifications
+     */
     public function getNotificationsForUser($email)
     {
         $notificationRoles = array();

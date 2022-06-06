@@ -21,6 +21,11 @@ class EventController extends Controller
         //
     }
 
+    /**
+     * Voir tous les événements
+     *
+     * @return tous les événnements
+     */
     public function allEvent()
     {
         $events = Event::orderBy('Debut', 'asc')->get();
@@ -38,16 +43,34 @@ class EventController extends Controller
         return $eventRoles;
     }
 
+    /**
+     * Rechercher un événement dans la base de données via son id
+     *
+     * @param  int  $id
+     * @return event
+     */
     public function EventById($id)
     {
         return Event::where('id', $id)->get();
     }
 
+    /**
+     * Rechercher un événement dans la base de données via son user
+     *
+     * @param  int  $user
+     * @return event
+     */
     public function EventByUser($user)
     {
         return Event::where('user_Email', $user)->get();
     }
 
+     /**
+     * Rechercher un événement dans la base de données via son role
+     *
+     * @param  int  $role
+     * @return event
+     */
     public function EventByRole($role)
     {
         return DB::table('events')
