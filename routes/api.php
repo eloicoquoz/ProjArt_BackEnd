@@ -130,7 +130,8 @@ Route::post('/cours/modif/{id}', [CoursController::class, 'update']);
 // Supression Cours
 Route::post('/cours/delete/{id}', [CoursController::class, 'destroy']);
 
-
+// Oubli du mot de passe
+Route::get('/oubli-mdp/{email}', [UserController::class, 'oubliMdp']);
 
 Route::get('/php', function () {
     return phpinfo();
