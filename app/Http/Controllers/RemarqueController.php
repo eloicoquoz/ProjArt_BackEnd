@@ -133,7 +133,7 @@ class RemarqueController extends Controller
      */
     public function store(Request $request)
     {
-        $notification;
+        $notification="";
         $remarque = new Remarque();
         $remarque->Titre = $request->Titre;
         $remarque->Description = $request->Description;

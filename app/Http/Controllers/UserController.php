@@ -11,8 +11,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Exists;
 use Symfony\Component\CssSelector\XPath\XPathExpr;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -199,7 +201,12 @@ class UserController extends Controller
      * Fonction de création d'un role pour un utilisateur.
      *
      */
+<<<<<<< HEAD
+    public function addRoleToUser($role, $email)
+    {
+=======
     public function addRoleToUser($roles, $email){
+>>>>>>> 12517009455114b5928d665bd1d3ea8995057d52
         $user = User::where('Email', $email)->first();
         if ($user) {
             $role = Role::where('id', $roles)->first();
@@ -214,5 +221,31 @@ class UserController extends Controller
             }
             echo nl2br("\n role added to user");
         }
+    }
+
+
+    /**
+     * Fonction de réinitialisation de mot de passe.
+     *
+     */
+    public function oubliMdp($email)
+    {
+
+        /* $motdepasse = Str::random(15);
+        $from = 'marielle.hanggeli@heig-vd.ch';
+        // Message
+        $message = "Bonjour,\r\nVoici le nouveau mot de passe pour l'application XXX : \r\n" . $motdepasse;
+        // Dans le cas où nos lignes comportent plus de 70 caractères, nous les coupons en utilisant wordwrap()
+        $message = wordwrap($message, 70, "\r\n");
+        // Header
+        $headers = "From:" . $from;
+
+        // Envoi du mail
+        $retval = mail($email, 'Réinitialisation du mot de passe', $message, $headers);
+        if ($retval == true) {
+            echo "Message sent successfully...";
+        } else {
+            echo "Message could not be sent...";
+        } */
     }
 }
