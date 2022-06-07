@@ -70,6 +70,9 @@ class UserController extends Controller
             $user->Password = Hash::make($pwd);
             $user->FullName = $fullName;
             $user->save();
+        }else{
+            $user->Password = Hash::make($pwd);
+            $user->save();
         }
         $this->testRole($email, $fullName);
         return $user;
@@ -127,14 +130,18 @@ class UserController extends Controller
      *
      * @return message
      */
-    public function login($password, $email)
+    public function login(Request $request)
     {
-
+        $email = $request->input('Email');
+        $password = $request->input('Password');
         if (User::where('Email', '=', $email)->exists()) {
             $user = User::where('Email', '=', $email)->first();
             if (Hash::check($password, $user->Password)) {
                 echo ('user found and connected');
-            } else {
+            } elseif($user->Password == null) {
+                self::signup($password, $email);
+            }
+            else {
                 echo ('user found : error in password or username');
             }
         } else {
@@ -176,7 +183,11 @@ class UserController extends Controller
         $arrfields = explode(',', $contents);
         $role = 'Etudiant';
         foreach($arrfields as $field) {
-            if ($field == $nomEntier) {
+            $arr = explode(' ', $field);
+            $nom = $arr[1];
+            $prenom = $arr[2];
+            $nomPrenom = $nom . ' ' . $prenom;
+            if ($nomPrenom == $nomEntier) {
                 $role = 'Professeur';
             }
         }
@@ -197,7 +208,10 @@ class UserController extends Controller
                 $role->id = $roles;
                 $role->save();
             }
-            $user->roles()->attach($roles);
+            $hasProf = $user->roles()->where('id', $roles)->first();
+            if (!$hasProf) {
+                $user->roles()->attach($roles);
+            }
             echo nl2br("\n role added to user");
         }
     }

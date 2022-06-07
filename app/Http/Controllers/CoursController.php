@@ -107,9 +107,10 @@ class CoursController extends Controller
             ->leftJoin('users', 'users.Email', '=', 'cours_user.user_Email')
             ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
             ->where('classe_cours.classe_id', $classe, 1)
-            ->where('role_user.role_id', 'Professeur', 1)
+            //->where('role_user.role_id', 'Professeur', 1)
             ->orderBy('cours.Debut', 'asc')
             ->select('cours.*', 'cours_salle.salle_id', 'users.FullName', 'role_user.role_id')
+            ->distinct()
             ->get();
     }
 

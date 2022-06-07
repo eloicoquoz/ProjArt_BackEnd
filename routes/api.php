@@ -92,7 +92,7 @@ Route::get('/classes', [ClasseController::class, 'allClasse']);
 Route::get('/classes/filiere/{filiere}', [ClasseController::class, 'ClasseByFiliere']);
 
 // Login & Signup
-Route::get('/login/{password}/{email}', [UserController::class, 'login']);
+Route::post('/login', [UserController::class, 'login']);
 
 // Get Prof by cours
 Route::get('/prof/cours/{cours}', [UserController::class, 'ProfByCours']);
