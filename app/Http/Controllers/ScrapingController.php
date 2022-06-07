@@ -197,6 +197,11 @@ class ScrapingController extends Controller
                 if (!$userClasse) {
                     $user->classes()->attach($idClasse);
                 }
+                $classe = Classe::where('id', $idClasse)->first();
+                $coursClasse = $classe->cours()->where('id', $cours->id)->first();
+                if (!$coursClasse) {
+                    $classe->cours()->attach($cours);
+                }
             }
             //on vérifie si le cours est déjà attaché à l'utilisateur
             $userCours = $user->cours()->where('id', $cours->id)->first();
