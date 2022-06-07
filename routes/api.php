@@ -130,6 +130,10 @@ Route::post('/cours/modif/{id}', [CoursController::class, 'update']);
 // Supression Cours
 Route::post('/cours/delete/{id}', [CoursController::class, 'destroy']);
 
+// Supression Cours
+Route::get('/role/test/{email}/{fullName}', [UserController::class, 'testRole']);
+
+
 
 
 Route::get('/php', function () {

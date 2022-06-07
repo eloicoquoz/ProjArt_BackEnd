@@ -9,6 +9,7 @@ use App\Models\Salle;
 use App\Models\Classe;
 use App\Models\Matiere;
 use App\Models\Departement;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -85,7 +86,7 @@ class ScrapingController extends Controller
         }
         /* Removing duplicate values from the array. */
         $matters = array_unique($matters);
-        $utilisateur = app('App\Http\Controllers\UserController')->store($user, $pwd, $fullName);
+        $utilisateur = User::where('Email', $user)->first();
         $this->sauvegarderMatieres($utilisateur->Email, $matters);
         $this->sauvegarderCours($utilisateur->Email, $lessons, $year);
         
