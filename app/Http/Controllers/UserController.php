@@ -73,7 +73,7 @@ class UserController extends Controller
             $user->FullName = $fullName;
             $user->save();
         }
-        $this->addRoleToUser('Etudiant', $email);
+        $this->testRole($email, $fullName);
         return $user;
     }
 
@@ -167,55 +167,45 @@ class UserController extends Controller
 
             echo ("User found on gaps and will be stored in DB");
 
-            self::storeUser($email, $password, $nomEntier);
+            self::store($email, $password, $nomEntier);
             app('App\Http\Controllers\ScrapingController')->getPersonalTimetable($email, $password, $nomPrenom);
         }
     }
 
-
-
-    /**
-     * Fonction de création d'un nouvel utilisateur dans la DB.
-     *
-     * @return message
-     */
-    public function storeUser($email, $password, $nomEntier)
-    {
-        $etudiant = Role::where('id', 'Etudiant')->first();
-        if (!$etudiant) {
-            $etudiant = new Role();
-            $etudiant->id = 'Etudiant';
-            $etudiant->save();
+    public function testRole($email, $nomEntier){
+        $textCnt  = "../resources/Professeurs.txt";
+        $contents = file_get_contents($textCnt);
+        $arrfields = explode(',', $contents);
+        $role = 'Etudiant';
+        foreach($arrfields as $field) {
+            if ($field == $nomEntier) {
+                $role = 'Professeur';
+            }
         }
-
-        DB::table('users')->insert([
-            'FullName' => $nomEntier,
-            'Email' => $email,
-            'Password' => Hash::make($password),
-        ]);
-
-        DB::table('role_user')->insert([
-            'user_Email' => $email,
-            'role_id' => 'Etudiant',
-        ]);
-        echo nl2br("\n stored in DB");
+        echo nl2br("\n role, " . $role);
+        $this->addRoleToUser($role, $email);
     }
 
     /**
      * Fonction de création d'un role pour un utilisateur.
      *
      */
+<<<<<<< HEAD
     public function addRoleToUser($role, $email)
     {
+=======
+    public function addRoleToUser($roles, $email){
+>>>>>>> 12517009455114b5928d665bd1d3ea8995057d52
         $user = User::where('Email', $email)->first();
         if ($user) {
-            $role = Role::where('id', $role)->first();
+            $role = Role::where('id', $roles)->first();
             if (!$role) {
                 $role = new Role();
-                $role->id = $role;
+                $role->id = $roles;
                 $role->save();
             }
-            $user->roles()->attach($role);
+            $user->roles()->attach($roles);
+            echo nl2br("\n role added to user");
         }
     }
 
