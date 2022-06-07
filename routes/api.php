@@ -103,11 +103,32 @@ Route::get('/matiere', [MatiereController::class, 'allMatiere']);
 // Create Remarque
 Route::post('/remarque/create', [RemarqueController::class, 'store']);
 
-// Create Remarque
+// Create Event
 Route::post('/event/create', [EventController::class, 'store']);
 
 //Get all notifications with sender's roles for user 
 Route::get('/notifications/{user}', [NotificationController::class, 'getNotificationsForUser']);
+
+// Modification Remarque
+Route::post('/remarque/modif/{id}', [RemarqueController::class, 'update']);
+
+// Modification Event
+Route::post('/event/modif/{id}', [EventController::class, 'update']);
+
+// Supression Remarque
+Route::post('/remarque/delete/{id}', [RemarqueController::class, 'destroy']);
+
+// Supression Event
+Route::post('/event/delete/{id}', [EventController::class, 'destroy']);
+
+// Create Cours
+Route::post('/cours/create', [CoursController::class, 'store']);
+
+// Modification Cours
+Route::post('/cours/modif/{id}', [CoursController::class, 'update']);
+
+// Supression Cours
+Route::post('/cours/delete/{id}', [CoursController::class, 'destroy']);
 
 
 
