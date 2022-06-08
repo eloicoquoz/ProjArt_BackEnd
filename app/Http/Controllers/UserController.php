@@ -235,7 +235,7 @@ class UserController extends Controller
         $message = wordwrap($message, 70, "\r\n");
         // Header
         $headers = "From:" . $from;
-        $user = User::where('Email', '=', $email)->exists()->first();
+        $user = User::where('Email', '=', $email)->exists();
 
         if ($user) {
             // Envoi du mail
