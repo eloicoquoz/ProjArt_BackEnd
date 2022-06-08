@@ -15,10 +15,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Exists;
 use Symfony\Component\CssSelector\XPath\XPathExpr;
 use Illuminate\Support\Str;
-use \Mailjet\Resources;
-use \Mailjet\Client;
-
-require '../vendor/autoload.php';
 
 class UserController extends Controller
 {
@@ -240,39 +236,18 @@ class UserController extends Controller
         // Header
         $headers = "From:" . $from;
 
-        /*
-        // Envoi du mail
-        $retval = mail($email, 'Réinitialisation du mot de passe', $message, $headers);
-        if ($retval == true) {
-            echo "Message sent successfully...";
-        } else {
-            echo "Message could not be sent...";
-        }*/
 
-
-        $mj = new \Mailjet\Client('****************************1234','****************************abcd',true,['version' => 'v3.1']);
-        $body = [
-            'Messages' => [
-            [
-                'From' => [
-                'Email' => "eloi.coquoz@heig-vd.ch",
-                'Name' => "Eloi"
-                ],
-                'To' => [
-                [
-                    'Email' => "eloi.coquoz@bluewin.ch",
-                    'Name' => "Eloi"
-                ]
-                ],
-                'Subject' => "Greetings from Mailjet.",
-                'TextPart' => "My first Mailjet email",
-                'HTMLPart' => "<h3>Dear passenger 1, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!",
-                'CustomID' => "AppGettingStartedTest"
-            ]
-            ]
-        ];
-        $response = $mj->post(Resources::$Email, ['body' => $body]);
-        $response->success() && var_dump($response->getData());
-        
+        if (User::where('Email', '=', $email)->exists()) {
+            // Envoi du mail
+            $retval = mail($email, 'Réinitialisation du mot de passe', $message, $headers);
+            if ($retval == true) {
+                echo "Message sent successfully...";
+            } else {
+                echo "Message could not be sent...";
+            }
+        }else{
+            echo "user not found";
+        }
     }
+        
 }
