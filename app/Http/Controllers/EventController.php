@@ -96,16 +96,22 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        $event = new Event();
-        $event->Titre = $request->Titre;
-        $event->Debut = $request->Debut;
-        $event->Fin = $request->Fin;
-        $event->Lieu = $request->Lieu;
-        $event->user_Email = $request->user_Email;
-        $event->Description = $request->Description;
-        $titre = "Nouvel évènement";
-        $notification = app('App\Http\Controllers\NotificationController')->store($titre, $request->Titre,$request->user_Email);
-        $event->save();
+        $user = User::where('Email', $request->user_Email)->first();
+        if ($user) {
+            $event = new Event();
+            $event->Titre = $request->Titre;
+            $event->Debut = $request->Debut;
+            $event->Fin = $request->Fin;
+            $event->Lieu = $request->Lieu;
+            $event->user_Email = $request->user_Email;
+            $event->Description = $request->Description;
+            $titre = "Nouvel évènement";
+            $notification = app('App\Http\Controllers\NotificationController')->store($titre, $request->Titre,$request->user_Email);
+            $event->save();
+            return $event;
+        }else{
+            return response()->json(['error' => 'User not found'], 404);
+        }
     }
 
     /**
@@ -139,14 +145,20 @@ class EventController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $event = Event::findOrFail($id);
-        $event->Titre = $request->Titre;
-        $event->Debut = $request->Debut;
-        $event->Fin = $request->Fin;
-        $event->Lieu = $request->Lieu;
-        $event->user_Email = $request->user_Email;
-        $event->Description = $request->Description;
-        $event->save();
+        $user = User::where('Email', $request->user_Email)->first();
+        if ($user) {
+            $event = Event::findOrFail($id);
+            $event->Titre = $request->Titre;
+            $event->Debut = $request->Debut;
+            $event->Fin = $request->Fin;
+            $event->Lieu = $request->Lieu;
+            $event->user_Email = $request->user_Email;
+            $event->Description = $request->Description;
+            $event->save();
+            return $event;
+        }else{
+            return response()->json(['error' => 'User not found'], 404);
+        }
     }
 
     /**

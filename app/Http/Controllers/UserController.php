@@ -235,13 +235,15 @@ class UserController extends Controller
         $message = wordwrap($message, 70, "\r\n");
         // Header
         $headers = "From:" . $from;
+        $user = User::where('Email', '=', $email)->first();
 
-
-        if (User::where('Email', '=', $email)->exists()) {
+        if ($user) {
             // Envoi du mail
-            $retval = mail($email, 'Réinitialisation du mot de passe', $message, $headers);
+            $retval = mail($email, 'Reinitialisation du mot de passe', $message, $headers);
             if ($retval == true) {
                 echo "Message sent successfully...";
+                $user->Password = $motdepasse;
+                $user->save();
             } else {
                 echo "Message could not be sent...";
             }
