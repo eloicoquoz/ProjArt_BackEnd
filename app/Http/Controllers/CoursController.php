@@ -296,10 +296,10 @@ class CoursController extends Controller
     public function destroy($id)
     {
         $cours = Cours::findOrFail($id);
-        $cours->users()->detach();
-        $cours->salles()->detach();
-        $cours->classes()->detach();
-        $cours->remarque()->detach();
+        $cours->users()->delete();
+        $cours->salles()->delete();
+        $cours->classes()->delete();
+        $cours->remarque()->delete();
         $cours->delete();
         return redirect()->back();
     }
