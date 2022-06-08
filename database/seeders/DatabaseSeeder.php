@@ -2,13 +2,14 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
+use App\Models\Role;
 use App\Models\User;
 use App\Models\Classe;
-use App\Models\Role;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DatabaseSeeder extends Seeder
 {
@@ -112,6 +113,7 @@ class DatabaseSeeder extends Seeder
                 }
             $user1->roles()->attach('Administration');                
         }
+        $this->scrapeForClasses();
     
     }
 
@@ -124,4 +126,21 @@ class DatabaseSeeder extends Seeder
 			$varMaChaine = str_replace($search, $replace, $varMaChaine);
 			return $varMaChaine; //On retourne le résultat
 		}
+    
+    function scrapeForClasses()
+    {
+        $email = 'jules.sandoz@heig-vd.ch';
+        $pwd = 'gUZw428u/S}^Jgff';
+        $textCnt  = "./resources/Classes.txt";
+        $contents = file_get_contents($textCnt);
+        $arrfields = explode(',', $contents);
+        foreach($arrfields as $field){
+            $arr = explode('_', $field);
+            $department = $arr[0];
+            $class = $arr[1];
+            app('App\Http\Controllers\ScrapingController')->getTimetablesForClass($email, $pwd, $class, $department);
+        }
+    }
+    
+    
 }

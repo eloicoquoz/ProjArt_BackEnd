@@ -34,8 +34,50 @@ class ScrapingController extends Controller
                 $trimestre = 3;
             }
         }
-
         $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . urlencode($user) . '&password=' . urlencode($pwd) . '&submit=Entrer&annee=' . $year . '&trimestre=' . $trimestre . '&type=2';
+        $response = $this->timetableFromURL($url);
+        $lessons = $response[0];
+        $matters = $response[1];
+        $utilisateur = User::where('Email', $user)->first();
+        $this->lierMatieresUser($utilisateur->Email, $matters);
+        $this->sauvegarderCoursUser($utilisateur->Email, $lessons, $year);
+    }
+
+    public function getTimetablesForClass($user, $pwd, $class, $schoolDepartment)
+    {
+        $year = date('Y');
+        $trimestre = 1;
+        /* Adaptation de la date au système GAPS (l'année doit correspondre à l'année de début de l'année scolaire) */
+        if (strtotime('now') < strtotime('31 August')) {
+            $year = $year - 1;
+            /* Passage au 2ème semestre */
+            if (strtotime('13 February') < strtotime('now')) {
+                $trimestre = 3;
+            }
+        }
+        $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . urlencode($user) . '&password=' . urlencode($pwd) . '&submit=Entrer&annee=' . $year . '&trimestre=' . $trimestre . '&type=9&id=' . $class;
+        $response = $this->timetableFromURL($url);
+        $lessons = $response[0];
+        $matters = $response[1];
+        $departement = Departement::where('id', $schoolDepartment)->first();
+        if (!$departement) {
+            $departement = new Departement();
+            $departement->id = $schoolDepartment;
+            $departement->save();
+        }
+        $classe = Classe::where('id', $class)->first();
+        if (!$classe) {
+            $classe = new Classe();
+            $classe->id = $class;
+            $classe->departement_id = $schoolDepartment;
+            $classe->save();
+        }
+        $this->creerMatieres($matters);
+        $this->sauvegarderCoursClasse($classe->id, $lessons);
+    }
+
+    public function timetableFromURL($url)
+    {
         $response = Http::get($url);
         $dom = new DOMDocument();
         @$dom->loadHTML($response->body());
@@ -69,7 +111,7 @@ class ScrapingController extends Controller
                 $lessonName = str_replace('OPT-VR', 'OPTVR', $lessonName);
                 /* Cutting the end of the strings to get only the course's name */
                 $lessonName = substr($lessonName, 0, strpos($lessonName, '-'));
-                $lessonTeacher = $lesson->item(3)->nodeValue;
+                $lessonTeacher = str_replace(' ', '', $lesson->item(3)->nodeValue);
                 $lessonRoom = preg_replace('/\xc2\xa0/', '', $lesson->item(4)->nodeValue);
                 $lesson = [
                     'date' => $lessonDate,
@@ -86,10 +128,7 @@ class ScrapingController extends Controller
         }
         /* Removing duplicate values from the array. */
         $matters = array_unique($matters);
-        $utilisateur = User::where('Email', $user)->first();
-        $this->sauvegarderMatieres($utilisateur->Email, $matters);
-        $this->sauvegarderCours($utilisateur->Email, $lessons, $year);
-        
+        return [$lessons, $matters];
     }
 
     /**
@@ -98,9 +137,21 @@ class ScrapingController extends Controller
      * @param email the email of the user
      * @param matters an array of matiere ids
      */
-    public function sauvegarderMatieres($email, $matters)
+    public function lierMatieresUser($email, $matters)
     {
         $user = app('App\Http\Controllers\UserController')->show($email);
+        $this->creerMatieres($matters);
+        foreach ($matters as $matter) {
+            $matiere = Matiere::where('id', $matter)->first();
+            $matiereUser = $user->matieres()->where('matiere_id', $matiere->id)->first();
+            if (!$matiereUser) {
+                $user->matieres()->attach($matiere);
+            }
+        }
+    }
+
+    public function creerMatieres($matters)
+    {
         foreach ($matters as $matter) {
             $matiere = Matiere::where('id', $matter)->first();
             if (!$matiere) {
@@ -108,10 +159,6 @@ class ScrapingController extends Controller
                 $matiere->id = $matter;
                 $matiere->Annee = $this->getYearForMatiere($matter);
                 $matiere->save();
-            }
-            $matiereUser = $user->matieres()->where('matiere_id', $matiere->id)->first();
-            if (!$matiereUser) {
-                $user->matieres()->attach($matiere);
             }
         }
     }
@@ -126,36 +173,114 @@ class ScrapingController extends Controller
      * @param lessons an array of lessons, each lesson is an array with the following keys: date, start, end, label, class, teacher, room
      * @param year the year of the user's schedule
      */
-    public function sauvegarderCours($email, $lessons, $year)
+    public function sauvegarderCoursUser($email, $lessons, $year)
     {
-        $user = app('App\Http\Controllers\UserController')->show($email);
-        // $user->cours()->detach();
         foreach ($lessons as $lesson) {
-
-            // $sallesString = $lesson['room'].replaceAll(' ', '');
-            $sallesString = str_replace(' ', '', $lesson['room']);
-            $sallesString = str_replace('*', '', $sallesString);
-            $sallesString = str_replace(' ', '', $sallesString);
-            $sallesArray = explode(',', $sallesString);
-
-            //Vérification de l'existence des salles et ajout si nécessaire
-            foreach ($sallesArray as $idSalle) {
-                $salle = Salle::where('id', $idSalle)->first();
-                if (!$salle) {
-                    $salle = new Salle();
-                    $salle->id = $idSalle;
-                    $salle->save();
+            $cours = $this->creerCours($lesson);
+            $user = app('App\Http\Controllers\UserController')->show($email);
+            if ($cours) {
+                $idClasse = $this->trouverClasseCours($lesson, $cours, $year);
+                $this->sauvegarderClasse($idClasse, $cours->matiere_id);
+                $userClasse = $user->classes()->where('id', $idClasse)->first();
+                if (!$userClasse) {
+                    $user->classes()->attach($idClasse);
+                }
+                $classe = Classe::where('id', $idClasse)->first();
+                $coursClasse = $classe->cours()->where('id', $cours->id)->first();
+                if (!$coursClasse) {
+                    $classe->cours()->attach($cours);
+                }
+                if ($lesson['teacher'] != '') {
+                    if (str_contains($lesson['teacher'], ',')) {
+                        $teachers = explode(',', $lesson['teacher']);
+                        foreach ($teachers as $teacher) {
+                            $prof = User::where('Acronyme', $teacher)->first();
+                            $profCours = $prof->cours()->where('id', $cours->id)->first();
+                            if (!$profCours) {
+                                $prof->cours()->attach($cours);
+                            }
+                        }
+                    } else {
+                        $prof = User::where('Acronyme', $lesson['teacher'])->first();
+                        $profCours = $prof->cours()->where('id', $cours->id)->first();
+                        if (!$profCours) {
+                            $prof->cours()->attach($cours);
+                        }
+                    }
+                }
+                //on vérifie si le cours est déjà attaché à l'utilisateur
+                $userCours = $user->cours()->where('id', $cours->id)->first();
+                //si le cours n'est pas attaché à l'utilisateur, on le fait
+                if (!$userCours) {
+                    $user->cours()->attach($cours);
                 }
             }
-            //cours enregistré(s) ayant la même date/heure de début, de fin et enseignant la même matière
-            $coursCorrespondants = Cours::where('Debut', $lesson['date'] . ' ' . $lesson['start'])->where('Fin', $lesson['date'] . ' ' . $lesson['end'])->where('matiere_id', $lesson['label'])->get();
-            $cours=null;
-            if($coursCorrespondants){
-                $salleAjoutee = false;
-                $indexCours = 0;
-                //pour chaque cours correspondant, vérification des salles correspondantes pour voir si c'est le même cours ou un cours similaire se passant au même moment
-                do{
-                    if(isset($coursCorrespondants[$indexCours])){
+        }
+    }
+
+    public function sauvegarderCoursClasse($class, $lessons)
+    {
+        foreach ($lessons as $lesson) {
+            $cours = $this->creerCours($lesson);
+            $classe = Classe::where('id', $class)->first();
+            $coursClasse = $cours->classes()->where('id', $classe->id)->first();
+            if (!$coursClasse) {
+                $cours->classes()->attach($classe);
+            }
+            if ($lesson['teacher'] != '') {
+                if (str_contains($lesson['teacher'], ',')) {
+                    $teachers = explode(',', $lesson['teacher']);
+                    foreach ($teachers as $teacher) {
+                        $prof = User::where('Acronyme', $teacher)->first();
+                        $profCours = $prof->cours()->where('id', $cours->id)->first();
+                        if (!$profCours) {
+                            $prof->cours()->attach($cours);
+                        }
+                    }
+                } else {
+                    $prof = User::where('Acronyme', $lesson['teacher'])->first();
+                    $profCours = $prof->cours()->where('id', $cours->id)->first();
+                    if (!$profCours) {
+                        $prof->cours()->attach($cours);
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * It creates a new lesson in the database if it doesn't exist yet, or updates it if it does
+     * 
+     * @param lesson an array containing the following keys:
+     * 
+     * @return Cours object is being returned.
+     */
+    public function creerCours($lesson)
+    {
+        $sallesString = str_replace(' ', '', $lesson['room']);
+        $sallesString = str_replace('*', '', $sallesString);
+        $sallesString = str_replace(' ', '', $sallesString);
+        $sallesArray = explode(',', $sallesString);
+
+        //Vérification de l'existence des salles et ajout si nécessaire
+        foreach ($sallesArray as $idSalle) {
+            $salle = Salle::where('id', $idSalle)->first();
+            if (!$salle) {
+                $salle = new Salle();
+                $salle->id = $idSalle;
+                $salle->save();
+            }
+        }
+        //cours enregistré(s) ayant la même date/heure de début, de fin et enseignant la même matière
+        $coursCorrespondants = Cours::where('Debut', $lesson['date'] . ' ' . $lesson['start'])->where('Fin', $lesson['date'] . ' ' . $lesson['end'])->where('matiere_id', $lesson['label'])->get();
+        $cours = null;
+        if ($coursCorrespondants) {
+            $salleAjoutee = false;
+            $indexCours = 0;
+            //pour chaque cours correspondant, vérification des salles correspondantes pour voir si c'est le même cours ou un cours similaire se passant au même moment
+            do {
+                if (isset($coursCorrespondants[$indexCours])) {
                     $coursCorrespondant = $coursCorrespondants[$indexCours];
                     $sallesCoursCorrespondant = $coursCorrespondant->salles()->get()->toArray();
                     $sallesCoursCorrespondant = array_column($sallesCoursCorrespondant, 'id');
@@ -178,46 +303,35 @@ class ScrapingController extends Controller
                         $salleAjoutee = true;
                         $cours = $coursCorrespondant;
                     }
-                    }
-                    $indexCours++;
-                    //la boucle s'arrête dès qu'on trouve un cours identique ou dès qu'on a passé par tous les cours correspondants
-                } while ($salleAjoutee == false && $indexCours < $coursCorrespondants->count());
-                //si aucun cours identique n'a été trouvé, on crée un nouveau cours
-                if (!$salleAjoutee) {
-                    $cours = new Cours();
-                    $cours->Debut = $lesson['date'] . ' ' . $lesson['start'];
-                    $cours->Fin = $lesson['date'] . ' ' . $lesson['end'];
-                    $cours->matiere_id = $lesson['label'];
-                    $cours->save();
-                    foreach ($sallesArray as $idSalle) {
-                        $salle = Salle::where('id', $idSalle)->first();
-                        $cours->salles()->attach($salle);
-                    }
                 }
-                $idClasse = $this->trouverClasseCours($lesson, $cours, $year);
-                $this->sauvegarderClasse($idClasse, $cours->matiere_id);
-                $userClasse = $user->classes()->where('id', $idClasse)->first();
-                if (!$userClasse) {
-                    $user->classes()->attach($idClasse);
-                }
-                $classe = Classe::where('id', $idClasse)->first();
-                $coursClasse = $classe->cours()->where('id', $cours->id)->first();
-                if (!$coursClasse) {
-                    $classe->cours()->attach($cours);
-                }
-                $prof = User::where('Acronyme', $lesson['teacher'])->first();
-                $profCours = $prof->cours()->where('id', $cours->id)->first();
-                if (!$profCours) {
-                    $prof->cours()->attach($cours);
+                $indexCours++;
+                //la boucle s'arrête dès qu'on trouve un cours identique ou dès qu'on a passé par tous les cours correspondants
+            } while ($salleAjoutee == false && $indexCours < $coursCorrespondants->count());
+            //si aucun cours identique n'a été trouvé, on crée un nouveau cours
+            if (!$salleAjoutee) {
+                $cours = new Cours();
+                $cours->Debut = $lesson['date'] . ' ' . $lesson['start'];
+                $cours->Fin = $lesson['date'] . ' ' . $lesson['end'];
+                $cours->matiere_id = $lesson['label'];
+                $cours->save();
+                foreach ($sallesArray as $idSalle) {
+                    $salle = Salle::where('id', $idSalle)->first();
+                    $cours->salles()->attach($salle);
                 }
             }
-            //on vérifie si le cours est déjà attaché à l'utilisateur
-            $userCours = $user->cours()->where('id', $cours->id)->first();
-            //si le cours n'est pas attaché à l'utilisateur, on le fait
-            if (!$userCours) {
-                $user->cours()->attach($cours);
+        } else {
+            // Si aucun cours correspondant n'est trouvé, on crée un nouveau cours
+            $cours = new Cours();
+            $cours->Debut = $lesson['date'] . ' ' . $lesson['start'];
+            $cours->Fin = $lesson['date'] . ' ' . $lesson['end'];
+            $cours->matiere_id = $lesson['label'];
+            $cours->save();
+            foreach ($sallesArray as $idSalle) {
+                $salle = Salle::where('id', $idSalle)->first();
+                $cours->salles()->attach($salle);
             }
         }
+        return $cours;
     }
 
     /**
@@ -248,7 +362,8 @@ class ScrapingController extends Controller
      * 
      * @return department of the given subject.
      */
-    public function getDepartementForMatiere($matiere){
+    public function getDepartementForMatiere($matiere)
+    {
         $comem = array('MarkDig1', 'Ang1', 'MedSerGam', 'ProtoEnv', 'DocWeb', 'BaseProg1', 'MéthOut', 'BaseMath1', 'FondMedias', 'ComHum', 'MarDévProd', 'DeDonAInf1', 'RechAnPub', 'EvolMétMéd', 'EcrireWeb', 'Ang2', 'GesBudget', 'BaseProg2', 'ComVisuel', 'ProdConMé1', 'BaseMath2', 'ProgServ1', 'MarkDig2', 'InfraDon1', 'DeDonAInf2', 'AnalysMar', 'PilotFin', 'Droit1', 'ProgWeb', 'EcoPrint', 'WebDon', 'ProdConMé2', 'InfraDonn2', 'ArchiDép', 'MétRecher', 'Ecomm', 'Socio', 'StratMarq', 'TechAv', 'DévProdMéd', 'WebMobUI', 'PropVal', 'ConceptUI', 'UXDesign', 'VenteProj', 'LabVeilSoc', 'VisualDon', 'Droit2', 'ProjArt', 'ArchInfoUX', 'ArchiOWeb', 'BusPlan', 'DévMobil', 'EvalOptPro', 'LabVeilTec', 'ProfilPro', 'Startup', 'SysComplex', 'UXLab', 'ApproMédia', 'CRUNCH', 'OPTIOT', 'OPTTMARK', 'OPTVR', 'ProjInt', 'Stage');
         $tic = array();
         $tin = array();
@@ -276,7 +391,7 @@ class ScrapingController extends Controller
         $departement = $this->getDepartementForMatiere($matiere);
         $departementEntry = Departement::where('id', $departement)->first();
         /* If the department doesn't exist, create a new instance of the Departement class and saving it to the database. */
-        if(!$departementEntry){
+        if (!$departementEntry) {
             $departementEntry = new Departement();
             $departementEntry->id = $departement;
             $departementEntry->save();
@@ -288,7 +403,6 @@ class ScrapingController extends Controller
             $classe->departement_id = $departement;
             $classe->save();
         }
-
     }
 
     /**
@@ -311,7 +425,7 @@ class ScrapingController extends Controller
         $classesPersonne = array();
         foreach ($anneeClasse as $annee => $classe) {
             $annee--;
-            $nomClasse = 'IM' . intval($year) - $annee - 1971 . '-' . $classe;
+            $nomClasse = 'M' . intval($year) - $annee - 1971 . '-' . $classe;
             $classesPersonne[] = $nomClasse;
         }
         $classesPersonne = array_unique($classesPersonne);
@@ -330,9 +444,9 @@ class ScrapingController extends Controller
      */
     public function trouverClasseCours($lesson, $cours, $year)
     {
-        $anneeCours = intval($this->getYearForMatiere($cours->matiere_id))-1;
+        $anneeCours = intval($this->getYearForMatiere($cours->matiere_id)) - 1;
         $numeroClasse = ord($lesson['class']) - ord('A') + 1;
-        $nomClasse = 'IM' . intval($year) - $anneeCours - 1971 . '-' . $numeroClasse;
+        $nomClasse = 'M' . intval($year) - $anneeCours - 1971 . '-' . $numeroClasse;
         return $nomClasse;
     }
 
