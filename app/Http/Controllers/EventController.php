@@ -33,7 +33,7 @@ class EventController extends Controller
         ->leftjoin('role_user', 'users.Email', '=', 'role_user.user_Email')
         ->orderBy('events.Debut', 'asc')
         ->select('events.*', 'users.FullName', 'role_user.role_id')
-        ->unique()
+        ->distinct()
         ->get();
     }
 
