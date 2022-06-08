@@ -201,8 +201,7 @@ class UserController extends Controller
      * Fonction de création d'un role pour un utilisateur.
      *
      */
-    public function addRoleToUser($role, $email)
-    {
+    public function addRoleToUser($roles, $email){
         $user = User::where('Email', $email)->first();
         if ($user) {
             $role = Role::where('id', $roles)->first();

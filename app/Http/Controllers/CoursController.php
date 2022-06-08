@@ -235,12 +235,9 @@ class CoursController extends Controller
     public function store(Request $request)
     {
         $cours = new Cours();
-        $cours->Titre = $request->Titre;
         $cours->Debut = $request->Debut;
         $cours->Fin = $request->Fin;
-        $cours->Lieu = $request->Lieu;
-        $cours->user_Email = $request->user_Email;
-        $cours->Description = $request->Description;
+        $cours->matiere_id = $request->matiere_id;
         $cours->save();
     }
 
@@ -299,9 +296,9 @@ class CoursController extends Controller
     public function destroy($id)
     {
         $cours = Cours::findOrFail($id);
-        $cours->user()->detach();
-        $cours->salle()->detach();
-        $cours->classe()->detach();
+        $cours->users()->detach();
+        $cours->salles()->detach();
+        $cours->classes()->detach();
         $cours->remarque()->detach();
         $cours->delete();
         return redirect()->back();
