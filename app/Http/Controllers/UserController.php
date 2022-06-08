@@ -243,6 +243,7 @@ class UserController extends Controller
             if ($retval == true) {
                 echo "Message sent successfully...";
                 $user->Password = $motdepasse;
+                $user->save();
             } else {
                 echo "Message could not be sent...";
             }
