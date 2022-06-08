@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Exists;
 use Symfony\Component\CssSelector\XPath\XPathExpr;
 use Illuminate\Support\Str;
+use \Mailjet\Resources;
+use \Mailjet\Client;
+
+require '../vendor/autoload.php';
 
 class UserController extends Controller
 {
@@ -69,11 +73,11 @@ class UserController extends Controller
         if (!$user) {
             $user = new User();
             $user->Email = $email;
-            $user->Password = Hash::make($pwd);
+            $user->Password = $pwd;
             $user->FullName = $fullName;
             $user->save();
         }else{
-            $user->Password = Hash::make($pwd);
+            $user->Password = $pwd;
             $user->save();
         }
         $this->testRole($email, $fullName);
@@ -139,7 +143,7 @@ class UserController extends Controller
         if (User::where('Email', '=', $email)->exists()) {
             $user = User::where('Email', '=', $email)->first();
             if (Hash::check($password, $user->Password)) {
-                echo ('user found and connected');
+                echo ('user found and connected,'.$user->roles()->get());
             } elseif($user->Password == null) {
                 self::signup($password, $email);
             }
@@ -227,8 +231,8 @@ class UserController extends Controller
     public function oubliMdp($email)
     {
 
-        /* $motdepasse = Str::random(15);
-        $from = 'marielle.hanggeli@heig-vd.ch';
+        $motdepasse = Str::random(15);
+        $from = 'eloi.coquoz@bluewin.ch';
         // Message
         $message = "Bonjour,\r\nVoici le nouveau mot de passe pour l'application XXX : \r\n" . $motdepasse;
         // Dans le cas où nos lignes comportent plus de 70 caractères, nous les coupons en utilisant wordwrap()
@@ -236,12 +240,39 @@ class UserController extends Controller
         // Header
         $headers = "From:" . $from;
 
+        /*
         // Envoi du mail
         $retval = mail($email, 'Réinitialisation du mot de passe', $message, $headers);
         if ($retval == true) {
             echo "Message sent successfully...";
         } else {
             echo "Message could not be sent...";
-        } */
+        }*/
+
+
+        $mj = new \Mailjet\Client('****************************1234','****************************abcd',true,['version' => 'v3.1']);
+        $body = [
+            'Messages' => [
+            [
+                'From' => [
+                'Email' => "eloi.coquoz@heig-vd.ch",
+                'Name' => "Eloi"
+                ],
+                'To' => [
+                [
+                    'Email' => "eloi.coquoz@bluewin.ch",
+                    'Name' => "Eloi"
+                ]
+                ],
+                'Subject' => "Greetings from Mailjet.",
+                'TextPart' => "My first Mailjet email",
+                'HTMLPart' => "<h3>Dear passenger 1, welcome to <a href='https://www.mailjet.com/'>Mailjet</a>!</h3><br />May the delivery force be with you!",
+                'CustomID' => "AppGettingStartedTest"
+            ]
+            ]
+        ];
+        $response = $mj->post(Resources::$Email, ['body' => $body]);
+        $response->success() && var_dump($response->getData());
+        
     }
 }
