@@ -70,7 +70,7 @@ class ScrapingController extends Controller
                 /* Cutting the end of the strings to get only the course's name */
                 $lessonName = substr($lessonName, 0, strpos($lessonName, '-'));
                 $lessonTeacher = $lesson->item(3)->nodeValue;
-                $lessonRoom = $lesson->item(4)->nodeValue;
+                $lessonRoom = preg_replace('/\xc2\xa0/', '', $lesson->item(4)->nodeValue);
                 $lesson = [
                     'date' => $lessonDate,
                     'start' => $lessonStart,
@@ -101,7 +101,6 @@ class ScrapingController extends Controller
     public function sauvegarderMatieres($email, $matters)
     {
         $user = app('App\Http\Controllers\UserController')->show($email);
-        // $user->matieres()->detach();
         foreach ($matters as $matter) {
             $matiere = Matiere::where('id', $matter)->first();
             if (!$matiere) {
@@ -133,7 +132,10 @@ class ScrapingController extends Controller
         // $user->cours()->detach();
         foreach ($lessons as $lesson) {
 
+            // $sallesString = $lesson['room'].replaceAll(' ', '');
             $sallesString = str_replace(' ', '', $lesson['room']);
+            $sallesString = str_replace('*', '', $sallesString);
+            $sallesString = str_replace(' ', '', $sallesString);
             $sallesArray = explode(',', $sallesString);
 
             //Vérification de l'existence des salles et ajout si nécessaire
@@ -160,7 +162,7 @@ class ScrapingController extends Controller
                     $sallesManquantes = array();
                     $checkSalle = false;
                     foreach ($sallesArray as $idSalle) {
-                        $idSalle = str_replace('*', '', $idSalle);
+                        $idSalle = str_replace(' ', '', $idSalle);
                         if (in_array($idSalle, $sallesCoursCorrespondant)) {
                             $checkSalle = true;
                         } else {
@@ -169,7 +171,7 @@ class ScrapingController extends Controller
                     }
                     if ($checkSalle) {
                         foreach ($sallesManquantes as $idSalle) {
-                            $idSalle = str_replace('*', '', $idSalle);
+                            $idSalle = str_replace(' ', '', $idSalle);
                             $salle = Salle::where('id', $idSalle)->first();
                             $coursCorrespondant->salles()->attach($salle);
                         }
@@ -202,6 +204,11 @@ class ScrapingController extends Controller
                 $coursClasse = $classe->cours()->where('id', $cours->id)->first();
                 if (!$coursClasse) {
                     $classe->cours()->attach($cours);
+                }
+                $prof = User::where('Acronyme', $lesson['teacher'])->first();
+                $profCours = $prof->cours()->where('id', $cours->id)->first();
+                if (!$profCours) {
+                    $prof->cours()->attach($cours);
                 }
             }
             //on vérifie si le cours est déjà attaché à l'utilisateur
