@@ -28,19 +28,12 @@ class EventController extends Controller
      */
     public function allEvent()
     {
-        $events = Event::orderBy('Debut', 'asc')->get();
-        //dd($events);
-        $eventRoles=array();
-        foreach ($events as $event) {
-            $user = User::findOrFail($event->user_Email);
-            $roles = $user->roles()->get();
-            $eventRoles[] = [
-                "event" => $event,
-                "roles" => $roles
-            ];
-        }
-        dd($eventRoles);
-        return $eventRoles;
+        return DB::table('events')
+        ->leftjoin('users', 'events.user_Email', '=', 'users.Email')
+        ->leftjoin('role_user', 'users.Email', '=', 'role_user.user_Email')
+        ->orderBy('events.Debut', 'asc')
+        ->select('events.*', 'users.FullName', 'role_user.role_id')
+        ->get();
     }
 
     /**
