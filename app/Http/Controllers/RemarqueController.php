@@ -134,31 +134,40 @@ class RemarqueController extends Controller
     public function store(Request $request)
     {
         $notification="";
-        $remarque = new Remarque();
-        $remarque->Titre = $request->Titre;
-        $remarque->Description = $request->Description;
-        $remarque->Visibilite = $request->Visibilite;
-        $remarque->Date = $request->Date;
-        $remarque->user_Email = $request->user_Email;
-        $remarque->cours_id = $request->cours_id;
-        if($request->Visibilite == "public" && $request->Titre=="retard"){
-            $titre = "Annonce de retard";
-            $user = User::findOrFail($request->user_Email);
-            $cours = Cours::findOrFail($request->cours_id);
-            $matiere = Matiere::findOrFail($cours->matiere_id);
-            $description = "Retard de " . $user->FullName . " pour le cours de " . $matiere->id. " du ".$cours->Debut;
-            $notification = app('App\Http\Controllers\NotificationController')->store($titre, $description,$request->user_Email);
-            app('App\Http\Controllers\DestinataireController')->store($request->cours_id, $notification->id);
-        }elseif($request->Visibilite == "public"){
-            $titre = "Nouvelle remarque";
-            $user = User::findOrFail($request->user_Email);
-            $cours = Cours::findOrFail($request->cours_id);
-            $matiere = Matiere::findOrFail($cours->matiere_id);
-            $description = "Nouvelle remarque de " . $user->FullName . " pour la matière suivante : " . $matiere->id;
-            $notification = app('App\Http\Controllers\NotificationController')->store($titre, $description,$request->user_Email);
-            app('App\Http\Controllers\DestinataireController')->store($request->cours_id, $notification->id);
+        $user = User::where('email', $request->user_Email)->first();
+        $cours = Cours::where('id', $request->cours_id)->first();
+        if($user && $cours){
+            $remarque = new Remarque();
+            $remarque->Titre = $request->Titre;
+            $remarque->Description = $request->Description;
+            $remarque->Visibilite = $request->Visibilite;
+            $remarque->Date = $request->Date;
+            $remarque->user_Email = $request->user_Email;
+            $remarque->cours_id = $request->cours_id;
+            if($request->Visibilite == "public" && $request->Titre=="retard"){
+                $titre = "Annonce de retard";
+                $user = User::findOrFail($request->user_Email);
+                $cours = Cours::findOrFail($request->cours_id);
+                $matiere = Matiere::findOrFail($cours->matiere_id);
+                $description = "Retard de " . $user->FullName . " pour le cours de " . $matiere->id. " du ".$cours->Debut;
+                $notification = app('App\Http\Controllers\NotificationController')->store($titre, $description,$request->user_Email);
+                app('App\Http\Controllers\DestinataireController')->store($request->cours_id, $notification->id);
+            }elseif($request->Visibilite == "public"){
+                $titre = "Nouvelle remarque";
+                $user = User::findOrFail($request->user_Email);
+                $cours = Cours::findOrFail($request->cours_id);
+                $matiere = Matiere::findOrFail($cours->matiere_id);
+                $description = "Nouvelle remarque de " . $user->FullName . " pour la matière suivante : " . $matiere->id;
+                $notification = app('App\Http\Controllers\NotificationController')->store($titre, $description,$request->user_Email);
+                app('App\Http\Controllers\DestinataireController')->store($request->cours_id, $notification->id);
+            }
+            $remarque->save();
+            return response()->json(['success' => 'Remarque ajouté avec succès']);
         }
-        $remarque->save();
+        else{
+            return response()->json(['error' => 'Cours ou User non existante']);
+        }
+       
     }
 
     /**
@@ -192,14 +201,22 @@ class RemarqueController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $remarque = Remarque::findOrFail($id);
-        $remarque->Titre = $request->Titre;
-        $remarque->Description = $request->Description;
-        $remarque->Visibilite = $request->Visibilite;
-        $remarque->Date = $request->Date;
-        $remarque->user_Email = $request->user_Email;
-        $remarque->cours_id = $request->cours_id;
-        $remarque->save();
+        $user = User::where('email', $request->user_Email)->first();
+        $cours = Cours::where('id', $request->cours_id)->first();
+        if($user && $cours){
+            $remarque = Remarque::findOrFail($id);
+            $remarque->Titre = $request->Titre;
+            $remarque->Description = $request->Description;
+            $remarque->Visibilite = $request->Visibilite;
+            $remarque->Date = $request->Date;
+            $remarque->user_Email = $request->user_Email;
+            $remarque->cours_id = $request->cours_id;
+            $remarque->save();
+            return response()->json(['success' => 'Remarque ajouté avec succès']);
+        }
+        else{
+            return response()->json(['error' => 'Cours ou User non existante']);
+        }
     }
 
     /**

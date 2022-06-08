@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cours;
+use App\Models\Matiere;
 use Illuminate\Support\Facades\DB;
 
 class CoursController extends Controller
@@ -234,11 +235,18 @@ class CoursController extends Controller
 
     public function store(Request $request)
     {
-        $cours = new Cours();
-        $cours->Debut = $request->Debut;
-        $cours->Fin = $request->Fin;
-        $cours->matiere_id = $request->matiere_id;
-        $cours->save();
+        $matiere = Matiere::where('id', $request->matiere)->first();
+        if($matiere){
+            $cours = new Cours();
+            $cours->Debut = $request->Debut;
+            $cours->Fin = $request->Fin;
+            $cours->matiere_id = $request->matiere_id;
+            $cours->save();
+            return response()->json(['success' => 'Cours ajouté avec succès']);
+        }
+        else{
+            return response()->json(['error' => 'Matière non existante']);
+        }
     }
 
     public function storeScrapping()
@@ -279,11 +287,18 @@ class CoursController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $cours = Cours::findOrFail($id);
-        $cours->Debut = $request->Debut;
-        $cours->Fin = $request->Fin;
-        $cours->matiere_id = $request->matiere_id;
-        $cours->save();
+        $matiere = Matiere::where('id', $request->matiere)->first();
+        if($matiere){
+            $cours = Cours::findOrFail($id);
+            $cours->Debut = $request->Debut;
+            $cours->Fin = $request->Fin;
+            $cours->matiere_id = $request->matiere_id;
+            $cours->save();
+            return response()->json(['success' => 'Cours modifié avec succès']);
+        }
+        else{
+            return response()->json(['error' => 'Matière non existante']);
+        }
     }
 
 
