@@ -134,7 +134,7 @@ class RemarqueController extends Controller
     public function store(Request $request)
     {
         $notification="";
-        $user = User::where('email', $request->user_Email)->first();
+        $user = User::where('Email', '=', $request->user_Email)->first();
         $cours = Cours::where('id', $request->cours_id)->first();
         if($user && $cours){
             $remarque = new Remarque();
@@ -201,7 +201,7 @@ class RemarqueController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $user = User::where('email', $request->user_Email)->first();
+        $user = User::where('Email', '=', $request->user_Email)->first();
         $cours = Cours::where('id', $request->cours_id)->first();
         if($user && $cours){
             $remarque = Remarque::findOrFail($id);
