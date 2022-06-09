@@ -129,8 +129,8 @@ class DatabaseSeeder extends Seeder
     
     function scrapeForClasses()
     { /* IN ORDER TO USE, FILL THE EMAIL AND PASSWORD USED TO CONNECT TO GAPS */
-        $email = '';
-        $pwd = '';
+        $email = 'eloi.coquoz@heig-vd.ch';
+        $pwd = '5g@19bE#6CX)';
         $textCnt  = "./resources/Classes.txt";
         $contents = file_get_contents($textCnt);
         $arrfields = explode(',', $contents);
