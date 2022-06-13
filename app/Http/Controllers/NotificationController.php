@@ -36,7 +36,7 @@ class NotificationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store($titre, $description,$user)
+    public function store($titre, $description, $user)
     {
         $date = date('Y-m-d H:i:s', strtotime(' + 2 hours'));
         $notification = new Notification();
@@ -106,6 +106,8 @@ class NotificationController extends Controller
         foreach ($notificationsReceived as $notificationReceived) {
             $notifications[] = Notification::where('id', $notificationReceived->notification_id)->first();
         }
+        // Tri des notifications par date d'envoi (en ordre décroissant)
+        $notifications = array_reverse($notifications);
         foreach ($notifications as $notification) {
             $rolesSender = User::where('Email', $notification->user_Email)->first()->roles()->get();
             $rolesArray = array();

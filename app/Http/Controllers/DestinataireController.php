@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Destinataire;
+use App\Models\User;
 use App\Models\Cours;
+use App\Models\Destinataire;
+use Illuminate\Http\Request;
 
 class DestinataireController extends Controller
 {
@@ -37,6 +38,17 @@ class DestinataireController extends Controller
     public function store($coursId, $notificationId)
     {
         $users = Cours::where('id', $coursId)->first()->users;
+        foreach ($users as $user) {
+            $destinataire = new Destinataire();
+            $destinataire->user_Email = $user->Email;
+            $destinataire->notification_id = $notificationId;
+            $destinataire->save();
+        }
+    }
+
+    public function notifyAll($notificationId)
+    {
+        $users = User::get();
         foreach ($users as $user) {
             $destinataire = new Destinataire();
             $destinataire->user_Email = $user->Email;

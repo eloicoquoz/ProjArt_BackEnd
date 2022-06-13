@@ -34,7 +34,7 @@ class Cours extends Model
         return $this->belongsTo(Matiere::class, 'matiere_id');
     }
 
-    public function remarque()
+    public function remarques()
     {
         return $this->hasMany(Remarque::class);
     }

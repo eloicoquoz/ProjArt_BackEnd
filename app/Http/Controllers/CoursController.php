@@ -311,10 +311,10 @@ class CoursController extends Controller
     public function destroy($id)
     {
         $cours = Cours::findOrFail($id);
-        $cours->users()->delete();
-        $cours->salles()->delete();
-        $cours->classes()->delete();
-        $cours->remarque()->delete();
+        $cours->users()->detach();
+        $cours->salles()->detach();
+        $cours->classes()->detach();
+        $cours->remarques()->delete();
         $cours->delete();
         return redirect()->back();
     }
