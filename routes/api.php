@@ -119,7 +119,7 @@ Route::post('/event/modif/{id}', [EventController::class, 'update']);
 Route::post('/remarque/delete/{id}', [RemarqueController::class, 'destroy']);
 
 // Supression Event
-Route::get('/event/delete/{id}', [EventController::class, 'destroy']);
+Route::post('/event/delete/{id}', [EventController::class, 'destroy']);
 
 // Create Cours
 Route::post('/cours/create', [CoursController::class, 'store']);

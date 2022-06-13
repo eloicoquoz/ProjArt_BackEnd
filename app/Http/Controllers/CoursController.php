@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Cours;
+use App\Models\Salle;
+use App\Models\Classe;
 use App\Models\Matiere;
+use App\Models\Notification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CoursController extends Controller
@@ -235,23 +238,53 @@ class CoursController extends Controller
 
     public function store(Request $request)
     {
-        $matiere = Matiere::where('id', $request->matiere)->first();
-        if($matiere){
+        $matiere = Matiere::where('id', $request->Matiere)->first();
+        if ($matiere) {
             $cours = new Cours();
             $cours->Debut = $request->Debut;
             $cours->Fin = $request->Fin;
-            $cours->matiere_id = $request->matiere_id;
+            $cours->matiere_id = $request->Matiere;
+            $salles = $request->Salles;
+            $salles = explode(' ', $salles);
             $cours->save();
-            return response()->json(['success' => 'Cours ajouté avec succès']);
-        }
-        else{
+            foreach ($salles as $salle) {
+                $uneSalle = Salle::where('id', $salle)->first();
+                if (!$uneSalle){
+                    $uneSalle = new Salle();
+                    $uneSalle->id = $salle;
+                    $uneSalle->save();
+                }
+            }
+            $cours->salles()->sync($salles);
+            $classes = $request->Classes;
+            $classes = explode(' ', $classes);
+            $usersInCourse = array();
+            foreach ($classes as $class) {
+                $classe = Classe::where('id', $class)->first();
+                $classe->cours()->attach($cours->id);
+                $usersInClass = $classe->users()->get();
+                foreach ($usersInClass as $user) {
+                    $theUser = $user->matieres()->where('id', $cours->matiere_id)->first();
+                    if ($theUser) {
+                        $usersInCourse[] = $user->Email;
+                    }
+                }
+            }
+            $usersInCourse = array_unique($usersInCourse);
+            foreach ($usersInCourse as $user) {
+                $cours->users()->attach($user);
+            }
+            $user = $request->User;
+            $notification = app('App\Http\Controllers\NotificationController')->store('Nouveau cours ajouté', 'Un cours de ' . $cours->matiere_id . ' a été ajouté.', $user);
+            $destinataires = app('App\Http\Controllers\DestinataireController')->notifyNewCours($usersInCourse, $notification->id);
+            return response()->json(['success' => 'Cours ajouté avec succès', 'notification' => $notification->id]);
+        } else {
             return response()->json(['error' => 'Matière non existante']);
         }
     }
 
     public function storeScrapping()
     {
-
     }
 
     /**
@@ -287,18 +320,19 @@ class CoursController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $matiere = Matiere::where('id', $request->matiere)->first();
-        if($matiere){
-            $cours = Cours::findOrFail($id);
-            $cours->Debut = $request->Debut;
-            $cours->Fin = $request->Fin;
-            $cours->matiere_id = $request->matiere_id;
-            $cours->save();
-            return response()->json(['success' => 'Cours modifié avec succès']);
-        }
-        else{
-            return response()->json(['error' => 'Matière non existante']);
-        }
+        $cours = Cours::findOrFail($id);
+        $cours->Debut = $request->Debut;
+        $cours->Fin = $request->Fin;
+        $salles = $request->Salles;
+        $salles = explode(' ', $salles);
+        $cours->save();
+        $cours->salles()->sync($salles);
+        $titre = "Modification d'un cours";
+        $desc = "Le cours de " . $cours->matiere_id . " du " . $cours->Debut . " a été modifié.";
+        $user = $request->User;
+        $notification = app('App\Http\Controllers\NotificationController')->store($titre, $desc, $user);
+        $destinataire = app('App\Http\Controllers\DestinataireController')->store($cours->id, $notification->id);
+        return response()->json(['success' => 'Cours modifié avec succès']);
     }
 
 
@@ -316,6 +350,9 @@ class CoursController extends Controller
         $cours->classes()->detach();
         $cours->remarques()->delete();
         $cours->delete();
+        $titre = "Cours supprimé";
+        $notification = app('App\Http\Controllers\NotificationController')->store($titre, $request->Titre,$request->user_Email);
+        $destinataire = app('App\Http\Controllers\DestinataireController')->store($id, $notification->id);
         return redirect()->back();
     }
 }

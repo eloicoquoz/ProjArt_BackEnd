@@ -57,6 +57,16 @@ class DestinataireController extends Controller
         }
     }
 
+    public function notifyNewCours($people, $notificationId)
+    {
+        foreach ($people as $user) {
+            $destinataire = new Destinataire();
+            $destinataire->user_Email = $user;
+            $destinataire->notification_id = $notificationId;
+            $destinataire->save();
+        }
+    }
+
     /**
      * Display the specified resource.
      *
