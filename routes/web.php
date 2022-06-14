@@ -15,7 +15,8 @@ use App\Http\Controllers\ScrapingController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+   header('Location: /app/index.html');
+   die();
 });
 Route::get('/gaps', [ScrapingController::class, 'getPersonalTimetable']);
 
