@@ -94,6 +94,9 @@ Route::get('/classes/filiere/{filiere}', [ClasseController::class, 'ClasseByFili
 // Login & Signup
 Route::post('/login', [UserController::class, 'login']);
 
+// Role
+Route::get('/role', [UserController::class, 'getRole']);
+
 // Get Prof by cours
 Route::get('/prof/cours/{cours}', [UserController::class, 'ProfByCours']);
 

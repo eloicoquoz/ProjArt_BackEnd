@@ -47,6 +47,11 @@ class UserController extends Controller
             ->get();
     }
 
+    public function getRole()
+    {
+        return DB::table('roles')->get();
+    }
+
     /**
      * Show the form for creating a new resource.
      *
