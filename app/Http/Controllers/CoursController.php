@@ -345,14 +345,14 @@ class CoursController extends Controller
     public function destroy(Request $request, $id)
     {
         $cours = Cours::findOrFail($id);
+        $notification = app('App\Http\Controllers\NotificationController')->store($titre, $titre, $request->User);
+        $destinataire = app('App\Http\Controllers\DestinataireController')->store($id, $notification->id);
         $cours->users()->detach();
         $cours->salles()->detach();
         $cours->classes()->detach();
         $cours->remarques()->delete();
         $cours->delete();
         $titre = "Cours supprimé";
-        $notification = app('App\Http\Controllers\NotificationController')->store($titre, $titre, $request->User);
-        $destinataire = app('App\Http\Controllers\DestinataireController')->store($id, $notification->id);
         return redirect()->back();
     }
 }
