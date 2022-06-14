@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('destinataires', function (Blueprint $table) {
             $table->integer('notification_id')->unsigned();
             $table->string('user_Email');
+            $table->boolean('Lu');
             $table->foreign('user_Email')
             ->references('Email')
             ->on('users')
@@ -24,7 +25,6 @@ return new class extends Migration
             $table->foreign('notification_id')->references('id')->on('notifications')
             ->onDelete('restrict')
             ->onUpdate('restrict');
-            
         });
     }
 

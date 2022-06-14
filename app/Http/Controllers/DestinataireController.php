@@ -42,6 +42,7 @@ class DestinataireController extends Controller
             $destinataire = new Destinataire();
             $destinataire->user_Email = $user->Email;
             $destinataire->notification_id = $notificationId;
+            $destinataire->Lu = false;
             $destinataire->save();
         }
     }
@@ -53,6 +54,7 @@ class DestinataireController extends Controller
             $destinataire = new Destinataire();
             $destinataire->user_Email = $user->Email;
             $destinataire->notification_id = $notificationId;
+            $destinataire->Lu = false;
             $destinataire->save();
         }
     }
@@ -63,6 +65,19 @@ class DestinataireController extends Controller
             $destinataire = new Destinataire();
             $destinataire->user_Email = $user;
             $destinataire->notification_id = $notificationId;
+            $destinataire->Lu = false;
+            $destinataire->save();
+        }
+    }
+
+    public function markAsRead(Request $request)
+    {
+        $notificationIds = $request->Notifications;
+        $notificationsArray = explode(',', $notificationIds);
+        $email = $request->User;
+        foreach ($notificationsArray as $notificationId) {
+            $destinataire = Destinataire::where('notification_id', $notificationId)->where('user_Email', $email)->first();
+            $destinataire->Lu = true;
             $destinataire->save();
         }
     }

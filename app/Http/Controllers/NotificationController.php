@@ -114,7 +114,8 @@ class NotificationController extends Controller
             foreach ($rolesSender as $role) {
                 array_push($rolesArray, $role->id);
             }
-            $notificationAndRoles = ['notification' => $notification, 'roles' => $rolesArray];
+            $status = $notification->destinataires()->where('user_Email', $email)->first()->Lu;
+            $notificationAndRoles = ['notification' => $notification, 'status' => $status, 'roles' => $rolesArray];
             array_push($notificationRoles, $notificationAndRoles);
         }
         return $notificationRoles;

@@ -8,6 +8,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\MatiereController;
 use App\Http\Controllers\RemarqueController;
+use App\Http\Controllers\DestinataireController;
 use App\Http\Controllers\NotificationController;
 
 /*
@@ -111,6 +112,9 @@ Route::post('/event/create', [EventController::class, 'store']);
 
 //Get all notifications with sender's roles for user 
 Route::get('/notifications/{user}', [NotificationController::class, 'getNotificationsForUser']);
+
+//Mark all of user's notifications as read
+Route::post('/notifications/read', [DestinataireController::class, 'markAsRead']);
 
 // Modification Remarque
 Route::post('/remarque/modif/{id}', [RemarqueController::class, 'update']);
