@@ -351,7 +351,7 @@ class CoursController extends Controller
         $cours->remarques()->delete();
         $cours->delete();
         $titre = "Cours supprimé";
-        $notification = app('App\Http\Controllers\NotificationController')->store($titre, $titre, $request->user_Email);
+        $notification = app('App\Http\Controllers\NotificationController')->store($titre, $titre, $request->User);
         $destinataire = app('App\Http\Controllers\DestinataireController')->store($id, $notification->id);
         return redirect()->back();
     }
