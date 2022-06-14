@@ -345,6 +345,7 @@ class CoursController extends Controller
     public function destroy(Request $request, $id)
     {
         $cours = Cours::findOrFail($id);
+        $titre = "Cours supprimé";
         $notification = app('App\Http\Controllers\NotificationController')->store($titre, $titre, $request->User);
         $destinataire = app('App\Http\Controllers\DestinataireController')->store($id, $notification->id);
         $cours->users()->detach();
@@ -352,7 +353,6 @@ class CoursController extends Controller
         $cours->classes()->detach();
         $cours->remarques()->delete();
         $cours->delete();
-        $titre = "Cours supprimé";
         return redirect()->back();
     }
 }
