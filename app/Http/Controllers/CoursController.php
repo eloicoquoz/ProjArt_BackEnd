@@ -274,6 +274,11 @@ class CoursController extends Controller
             foreach ($usersInCourse as $user) {
                 $cours->users()->attach($user);
             }
+            $prof = $request->Prof;
+            $profUser = User::where('Acronyme', $prof)->first();
+            if ($profUser) {
+                $cours->users()->attach($profUser->Email);
+            }
             $user = $request->User;
             $notification = app('App\Http\Controllers\NotificationController')->store('Nouveau cours ajouté', 'Un cours de ' . $cours->matiere_id . ' a été ajouté.', $user);
             $destinataires = app('App\Http\Controllers\DestinataireController')->notifyNewCours($usersInCourse, $notification->id);
