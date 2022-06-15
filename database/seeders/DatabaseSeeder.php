@@ -113,6 +113,27 @@ class DatabaseSeeder extends Seeder
                 }
             $user1->roles()->attach('Administration');                
         }
+        $roleAGE = new Role();
+        $roleAGE->id = 'AGE';
+        $roleAGE->save();
+        $age = new User();
+        $age->Email = 'age@heig-vd.ch';
+        $age->FullName = 'AGE';
+        $age->Password = 'AGE';
+        $age->save();
+        $age->roles()->attach('AGE');
+        $roleAdmin = Role::where('id', 'Administration')->first();
+        if (!$roleAdmin) {
+            $roleAdmin = new Role();
+            $roleAdmin->id = 'Administration';
+            $roleAdmin->save();
+        }
+        $admin = new User();
+        $admin->Email = 'admin@heig-vd.ch';
+        $admin->FullName = 'Admin';
+        $admin->Password = 'Admin';
+        $admin->save();
+        $admin->roles()->attach('Administration');
         $this->scrapeForClasses();
     
     }
