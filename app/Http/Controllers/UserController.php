@@ -233,11 +233,9 @@ class UserController extends Controller
     {
 
         $motdepasse = Str::random(15);
-        $from = 'eloi.coquoz@bluewin.ch';
+        $from = 'eloi.coquoz@heig-vd.ch';
         // Message
-        $message = "Bonjour,\r\nVoici le nouveau mot de passe pour l'application XXX : \r\n" . $motdepasse;
-        // Dans le cas où nos lignes comportent plus de 70 caractères, nous les coupons en utilisant wordwrap()
-        $message = wordwrap($message, 70, "\r\n");
+        $message = "Bonjour,\r\nVoici le nouveau mot de passe pour l'application Kairos : \r\n" . $motdepasse;
         // Header
         $headers = "From:" . $from;
         $user = User::where('Email', '=', $email)->first();

@@ -38,6 +38,16 @@ class ClasseController extends Controller
         return DB::table('classes')->select('id')->where('departement_id', $filiere, 1)->get();
     }
 
+     /**
+     * Retourne tous les départements
+     *
+     * @return toutes les départements
+     */
+    public function allFiliere()
+    {
+        return DB::table('departements')->get();
+    }
+
     /**
      * Show the form for creating a new resource.
      *
