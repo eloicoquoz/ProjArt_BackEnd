@@ -38,7 +38,7 @@ class NotificationController extends Controller
      */
     public function store($titre, $description, $user)
     {
-        $date = date('Y-m-d H:i:s', now());
+        $date = date('Y-m-d H:i:s');
         $notification = new Notification();
         $notification->Objet = $titre;
         $notification->Message = $description;
