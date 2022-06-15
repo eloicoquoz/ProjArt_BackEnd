@@ -175,6 +175,37 @@ class CoursController extends Controller
             ->get();
     }
 
+    public function ProfByFiliere($filiere)
+    {
+        return DB::table('cours')
+            ->join('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+            ->join('users', 'users.Email', '=', 'cours_user.user_Email')
+            ->join('classe_cours', 'cours.id', '=', 'classe_cours.cours_id')
+            ->leftJoin('classes', 'classes.id', '=', 'classe_cours.classe_id')
+            ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
+            ->where('classes.departement_id', $filiere, 1)
+            ->where('role_user.role_id', 'Professeur', 1)
+            ->select('users.*')
+            ->distinct()
+            ->get();
+    }
+
+    public function EtudiantbyClasse($classe)
+    {
+        return DB::table('cours')
+            ->join('cours_user', 'cours.id', '=', 'cours_user.cours_id')
+            ->join('users', 'users.Email', '=', 'cours_user.user_Email')
+            ->join('classe_cours', 'cours.id', '=', 'classe_cours.cours_id')
+            ->leftJoin('classes', 'classes.id', '=', 'classe_cours.classe_id')
+            ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
+            ->where('classes.id', $classe, 1)
+            ->where('role_user.role_id', 'Etudiant', 1)
+            ->select('users.*')
+            ->distinct()
+            ->get();
+    }
+    
+
     /**
      * Voir les professeur en fonction d'un user et d'une matière
      *
