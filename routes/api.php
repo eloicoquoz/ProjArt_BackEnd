@@ -149,6 +149,8 @@ Route::get('/oubli-mdp/{email}', [UserController::class, 'oubliMdp']);
 // Oubli du mot de passe
 Route::get('/filiere', [ClasseController::class, 'allFiliere']);
 
+Route::get('/cc/{email}', [UserController::class, 'getControlesContinus']);
+
 
 Route::get('/php', function () {
     return phpinfo();
