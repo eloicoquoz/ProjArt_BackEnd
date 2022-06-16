@@ -120,7 +120,7 @@ Route::post('/event/create', [EventController::class, 'store']);
 Route::get('/notifications/{user}', [NotificationController::class, 'getNotificationsForUser']);
 
 //Mark all of user's notifications as read
-Route::post('/notifications/read', [DestinataireController::class, 'markAsRead']);
+Route::post('/read/notifications', [DestinataireController::class, 'markAsRead']);
 
 // Modification Remarque
 Route::post('/remarque/modif/{id}', [RemarqueController::class, 'update']);
