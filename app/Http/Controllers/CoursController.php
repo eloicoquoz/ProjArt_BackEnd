@@ -357,6 +357,14 @@ class CoursController extends Controller
         $salles = $request->Salles;
         $salles = explode(' ', $salles);
         $cours->save();
+        foreach ($salles as $salle) {
+            $uneSalle = Salle::where('id', $salle)->first();
+            if (!$uneSalle){
+                $uneSalle = new Salle();
+                $uneSalle->id = $salle;
+                $uneSalle->save();
+            }
+        }
         $cours->salles()->sync($salles);
         $titre = "Modification d'un cours";
         $desc = "Le cours de " . $cours->matiere_id . " du " . $cours->Debut . " a été modifié.";
