@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Cours;
 use App\Models\Destinataire;
 use Illuminate\Http\Request;
+use App\Http\Requests\DestinataireRequest;
 
 class DestinataireController extends Controller
 {
@@ -70,7 +71,7 @@ class DestinataireController extends Controller
         }
     }
 
-    public function markAsRead(Request $request)
+    public function markAsRead(DestinataireRequest $request)
     {
         $notificationIds = $request->Notifications;
         $notificationsArray = explode(',', $notificationIds);

@@ -7,14 +7,15 @@ use Throwable;
 use DOMDocument;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Exists;
 use Symfony\Component\CssSelector\XPath\XPathExpr;
-use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -137,7 +138,7 @@ class UserController extends Controller
      *
      * @return message
      */
-    public function login(Request $request)
+    public function login(UserRequest $request)
     {
         $email = $request->input('Email');
         $password = $request->input('Password');

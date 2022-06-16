@@ -10,6 +10,8 @@ use App\Models\Matiere;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\CoursCreationRequest;
+use App\Http\Requests\CoursModificationRequest;
 
 class CoursController extends Controller
 {
@@ -260,7 +262,7 @@ class CoursController extends Controller
      */
 
 
-    public function store(Request $request)
+    public function store(CoursCreationRequest $request)
     {
         $matiere = Matiere::where('id', $request->Matiere)->first();
         if ($matiere) {
@@ -347,7 +349,7 @@ class CoursController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CoursModificationRequest $request, $id)
     {
         $cours = Cours::findOrFail($id);
         $cours->Debut = $request->Debut;

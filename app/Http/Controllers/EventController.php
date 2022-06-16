@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Event;
-use App\Models\Notification;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Event;
+use App\Models\Notification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\EventRequest;
 
 class EventController extends Controller
 {
@@ -94,7 +95,7 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(EventRequest $request)
     {
         $user = User::where('Email', $request->user_Email)->first();
         if ($user) {
@@ -144,7 +145,7 @@ class EventController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(EventRequest $request, $id)
     {
         $user = User::where('Email', $request->user_Email)->first();
         if ($user) {

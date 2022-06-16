@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Remarque;
 use App\Models\User;
 use App\Models\Cours;
 use App\Models\Matiere;
+use App\Models\Remarque;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\RemarqueRequest;
 
 
 class RemarqueController extends Controller
@@ -131,7 +132,7 @@ class RemarqueController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RemarqueRequest $request)
     {
         $notification="";
         $user = User::where('Email', '=', $request->user_Email)->first();
