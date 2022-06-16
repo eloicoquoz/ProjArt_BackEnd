@@ -88,9 +88,13 @@ class DestinataireController extends Controller
         $notificationsArray = explode(',', $notificationIds);
         $email = $request->User;
         foreach ($notificationsArray as $notificationId) {
-            $destinataire = Destinataire::where('notification_id', $notificationId)->where('user_Email', $email)->first();
-            $destinataire->Lu = true;
-            $destinataire->save();
+            $destinataires = Destinataire::where('user_Email', $email)->get();
+            foreach ($destinataires as $destinataire) {
+                if($destinataire->notification_id == $notificationId){
+                    $destinataire->Lu = true;
+                    $destinataire->save();
+                }
+            }
         }
     }
 
