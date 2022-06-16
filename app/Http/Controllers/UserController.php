@@ -33,6 +33,22 @@ class UserController extends Controller
     }
 
     /**
+     * Voir tous les professeurs
+     *
+     * @return professeurs
+     */
+    public function allProf()
+    {
+        return DB::table('users')
+        ->join('cours_user', 'users.Email', '=', 'cours_user.user_Email')
+        ->leftJoin('role_user', 'users.Email', '=', 'role_user.user_Email')
+        ->where('role_user.role_id', 'Professeur', 1)
+        ->select('users.FullName', 'users.Email', 'users.Acronyme')
+        ->distinct()
+        ->get();
+    }
+
+    /**
      * Voir les professeurs en fonction d'un cours
      *
      * @return listes des professeurs

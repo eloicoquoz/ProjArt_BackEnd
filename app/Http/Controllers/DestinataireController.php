@@ -71,6 +71,17 @@ class DestinataireController extends Controller
         }
     }
 
+    public function notifyNewPerson($user, $notifId)
+    {
+            if($user != null){
+                $destinataire = new Destinataire();
+                $destinataire->user_Email = $user->Email;
+                $destinataire->notification_id = $notifId;
+                $destinataire->Lu = false;
+                $destinataire->save();
+            }
+    }
+
     public function markAsRead(DestinataireRequest $request)
     {
         $notificationIds = $request->Notifications;

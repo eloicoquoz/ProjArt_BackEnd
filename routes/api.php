@@ -80,6 +80,9 @@ Route::get('/cours/salle', [CoursController::class, 'SalleByCours']);
 // Get Professeur by user by matiere
 Route::get('/cours/prof/{user}/{matiere}', [CoursController::class, 'ProfByUserByMatiere']);
 
+// Get All Professeur
+Route::get('/prof', [UserController::class, 'allProf']);
+
 // Get Professeur by Filiere
 Route::get('/prof/{filiere}', [CoursController::class, 'ProfByFiliere']);
 
@@ -148,6 +151,9 @@ Route::get('/oubli-mdp/{email}', [UserController::class, 'oubliMdp']);
 
 // Oubli du mot de passe
 Route::get('/filiere', [ClasseController::class, 'allFiliere']);
+
+// Création Notification
+Route::post('/notif/create', [NotificationController::class, 'createNotification']);
 
 
 Route::get('/php', function () {

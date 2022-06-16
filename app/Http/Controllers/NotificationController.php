@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DateTime;
 use App\Models\User;
 use App\Models\Notification;
+use App\Models\Classe;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 
@@ -18,6 +19,43 @@ class NotificationController extends Controller
     public function index()
     {
         //
+    }
+
+    /**
+     * Créer une notification pour un utilisateut
+     *
+     * @return la notification créée
+     */
+    public function createNotification(Request $request){
+        $destinataires = $request->destinataire_Email;
+        $destinataires = explode(',', $destinataires);
+        $notification = app('App\Http\Controllers\NotificationController')->store($request->Titre, $request->Description,$request->user_Email);
+        $reussite = true;
+        foreach ($destinataires as $destinataire) {
+            $existDestinataire = User::where('Email', $destinataire)->first();
+            $existClasse = Classe::where('id', $destinataire)->first();
+            if($existDestinataire != null){
+                $destinataire = app('App\Http\Controllers\DestinataireController')->notifyNewPerson($existDestinataire, $notification->id);
+            } else if($existClasse != null){
+                $usersInCourse = array();
+                $usersInClass = $existClasse->users()->get();
+                    foreach ($usersInClass as $user) {
+                        $theUser = $user->Email;
+                        if ($theUser) {
+                            $usersInCourse[] = $user->Email;
+                        }
+                    }
+                $usersInCourse = array_unique($usersInCourse);
+                $destinataires = app('App\Http\Controllers\DestinataireController')->notifyNewCours($usersInCourse, $notification->id);
+            }  else{
+                $reussite = false;
+            }
+        }
+        if($reussite){
+            echo "Notification envoyée ";
+        }else{
+            echo "Destinataire non trouvé : ".$destinataire." Merci de les séparer par des virgules";
+        }
     }
 
     /**

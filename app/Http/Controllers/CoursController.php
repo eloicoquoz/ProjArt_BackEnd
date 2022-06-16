@@ -116,7 +116,7 @@ class CoursController extends Controller
             ->where('classe_cours.classe_id', $classe, 1)
             ->where('role_user.role_id', 'Professeur', 1)
             ->orderBy('cours.Debut', 'asc')
-            ->select('cours.*', 'cours_salle.salle_id', 'users.FullName', 'role_user.role_id')
+            ->select('cours.*', 'cours_salle.salle_id', 'users.FullName', 'users.Acronyme', 'role_user.role_id')
             ->distinct()
             ->get();
     }
@@ -366,6 +366,11 @@ class CoursController extends Controller
             }
         }
         $cours->salles()->sync($salles);
+        $prof = $request->Prof;
+        $profUser = User::where('Acronyme', $prof)->first();
+        if ($profUser) {
+            $cours->users()->attach($profUser->Email);
+        }
         $titre = "Modification d'un cours";
         $desc = "Le cours de " . $cours->matiere_id . " du " . $cours->Debut . " a été modifié.";
         $user = $request->User;
