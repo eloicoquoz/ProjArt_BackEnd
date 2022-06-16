@@ -165,12 +165,15 @@ class UserController extends Controller
      */
     public function signup($password, $email)
     {
-        $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . urlencode($email) . '&password=' . urlencode($password) . '&submit=Entrer';
+        $passEncode = urlencode($password);
+        $emailEncode = $email;
+        $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . $emailEncode . '&password=' . $passEncode . '&submit=Entrer';
+        echo $url;
         $response = Http::get($url);
         $dom = new DOMDocument();
         @$dom->loadHTML($response->body());
         $xpath = new DOMXPath($dom);
-        $nomPrenom = $xpath->query('/html/body/div[1]/div[6]/h3/a');
+        $nomPrenom = $xpath->query('//div[contains(@class,"scheduleHeader")]/h3/a');
 
         if ($nomPrenom->length == 0) {
             echo ('user not found on gaps, error in email or password');
