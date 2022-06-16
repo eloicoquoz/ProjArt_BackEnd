@@ -107,6 +107,7 @@ class NotificationController extends Controller
             $notifications[] = Notification::where('id', $notificationReceived->notification_id)->first();
         }
         // Tri des notifications par date d'envoi (en ordre décroissant)
+        $notification = collect($notifications)->sortByDesc('EnvoiHeureDate');
         $notifications = array_reverse($notifications);
         foreach ($notifications as $notification) {
             $rolesSender = User::where('Email', $notification->user_Email)->first()->roles()->get();
