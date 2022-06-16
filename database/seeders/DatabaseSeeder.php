@@ -14,7 +14,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 class DatabaseSeeder extends Seeder
 {
 
-    
+
     /**
      * Seed the application's database.
      *
@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         //\App\Models\User::factory(10)->create();
+        //\App\Models\User::factory(10)->create();
         DB::table('destinataires')->delete();
         DB::table('notifications')->delete();
         DB::table('classe_cours')->delete();
@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
         $textCnt  = "./resources/Professeurs.txt";
         $contents = file_get_contents($textCnt);
         $arrfields = explode(',', $contents);
-        foreach($arrfields as $field) {
+        foreach ($arrfields as $field) {
             $arr = explode(' ', $field);
             $pseudo = $arr[0];
             $nom = $this->fctRetirerAccents(strtolower($arr[1]));
@@ -79,18 +79,18 @@ class DatabaseSeeder extends Seeder
                 $user->save();
             }
             $role = Role::where('id', 'Professeur')->first();
-                if (!$role) {
-                    $role = new Role();
-                    $role->id = 'Professeur';
-                    $role->save();
-                }
-            $user->roles()->attach('Professeur');                
+            if (!$role) {
+                $role = new Role();
+                $role->id = 'Professeur';
+                $role->save();
+            }
+            $user->roles()->attach('Professeur');
         }
 
         $textCnt1  = "./resources/Administration.txt";
         $contents1 = file_get_contents($textCnt1);
         $arrfields1 = explode(',', $contents1);
-        foreach($arrfields1 as $field1) {
+        foreach ($arrfields1 as $field1) {
             $arr1 = explode(' ', $field1);
             $pseudo1 = $arr1[0];
             $nom1 = $this->fctRetirerAccents(strtolower($arr1[1]));
@@ -106,12 +106,12 @@ class DatabaseSeeder extends Seeder
                 $user1->save();
             }
             $role1 = Role::where('id', 'Administration')->first();
-                if (!$role1) {
-                    $role1 = new Role();
-                    $role1->id = 'Administration';
-                    $role1->save();
-                }
-            $user1->roles()->attach('Administration');                
+            if (!$role1) {
+                $role1 = new Role();
+                $role1->id = 'Administration';
+                $role1->save();
+            }
+            $user1->roles()->attach('Administration');
         }
         $roleAGE = new Role();
         $roleAGE->id = 'AGE';
@@ -135,33 +135,30 @@ class DatabaseSeeder extends Seeder
         $admin->save();
         $admin->roles()->attach('Administration');
         $this->scrapeForClasses();
-    
     }
 
     function fctRetirerAccents($varMaChaine)
-		{
-			$search  = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ð', 'ò', 'ó', 'ô', 'õ', 'ö', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ');
-			//Préférez str_replace à strtr car strtr travaille directement sur les octets, ce qui pose problème en UTF-8
-			$replace = array('A', 'A', 'A', 'A', 'A', 'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 'a', 'a', 'a', 'a', 'a', 'a', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'y', 'y');
+    {
+        $search  = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ð', 'ò', 'ó', 'ô', 'õ', 'ö', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ');
+        //Préférez str_replace à strtr car strtr travaille directement sur les octets, ce qui pose problème en UTF-8
+        $replace = array('A', 'A', 'A', 'A', 'A', 'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 'a', 'a', 'a', 'a', 'a', 'a', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'y', 'y');
 
-			$varMaChaine = str_replace($search, $replace, $varMaChaine);
-			return $varMaChaine; //On retourne le résultat
-		}
-    
+        $varMaChaine = str_replace($search, $replace, $varMaChaine);
+        return $varMaChaine; //On retourne le résultat
+    }
+
     function scrapeForClasses()
     { /* IN ORDER TO USE, FILL THE EMAIL AND PASSWORD USED TO CONNECT TO GAPS */
-        $email = 'eloi.coquoz@heig-vd.ch';
-        $pwd = '5g@19bE#6CX)';
+        $email = 'lucas.cuennet@heig-vd.ch';
+        $pwd = 'Lucu1234heig';
         $textCnt  = "./resources/Classes.txt";
         $contents = file_get_contents($textCnt);
         $arrfields = explode(',', $contents);
-        foreach($arrfields as $field){
+        foreach ($arrfields as $field) {
             $arr = explode('_', $field);
             $department = $arr[0];
             $class = $arr[1];
             app('App\Http\Controllers\ScrapingController')->getTimetablesForClass($email, $pwd, $class, $department);
         }
     }
-    
-    
 }
