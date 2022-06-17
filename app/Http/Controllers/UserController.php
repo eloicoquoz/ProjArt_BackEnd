@@ -157,6 +157,7 @@ class UserController extends Controller
     public function login(UserRequest $request)
     {
         $email = $request->input('Email');
+        $email = strtolower($email);
         $password = $request->input('Password');
         if (User::where('Email', '=', $email)->exists()) {
             $user = User::where('Email', '=', $email)->first();
@@ -166,10 +167,14 @@ class UserController extends Controller
                 self::signup($password, $email);
             }
             else {
+                $tabMail = explode('@', $email);
+                $tabIdentifiant = explode('.', $tabMail[0]);
+                $identifiantNom = strtolower($tabIdentifiant[1]);
+                $identifiantPrenom = strtolower($tabIdentifiant[0]);
+                $identifiant = substr($identifiantPrenom,0,8) . '.' . substr($identifiantNom, 0, 8);
                 $passEncode = urlencode($password);
-                $emailEncode = $email;
+                $emailEncode = urlencode($identifiant);
                 $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . $emailEncode . '&password=' . $passEncode . '&submit=Entrer';
-                echo $url;
                 $response = Http::get($url);
                 $dom = new DOMDocument();
                 @$dom->loadHTML($response->body());
@@ -198,10 +203,14 @@ class UserController extends Controller
      */
     public function signup($password, $email)
     {
+        $tabMail = explode('@', $email);
+        $tabIdentifiant = explode('.', $tabMail[0]);
+        $identifiantNom = strtolower($tabIdentifiant[1]);
+        $identifiantPrenom = strtolower($tabIdentifiant[0]);
+        $identifiant = substr($identifiantPrenom,0,8) . '.' . substr($identifiantNom, 0, 8);
         $passEncode = urlencode($password);
-        $emailEncode = $email;
+        $emailEncode = urlencode($identifiant);
         $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . $emailEncode . '&password=' . $passEncode . '&submit=Entrer';
-        echo $url;
         $response = Http::get($url);
         $dom = new DOMDocument();
         @$dom->loadHTML($response->body());
