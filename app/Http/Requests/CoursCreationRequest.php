@@ -24,7 +24,7 @@ class CoursCreationRequest extends FormRequest
     public function rules()
     {
         return [
-            'Matiere' => 'required|regex:/^[a-zA-Z0-9]+$/',
+            'Matiere' => 'required|regex:/^[a-zA-ZÀ-ú0-9]+$/',
             'Debut' => 'required|date|after:yesterday',
             'Fin' => 'required|date|after:Debut',
             //Contains groups of 1 upper case letter with 3 numbers and possibly a lowercase letter at the end, each group is separated by a space
