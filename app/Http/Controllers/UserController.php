@@ -179,6 +179,8 @@ class UserController extends Controller
         if ($nomPrenom->length == 0) {
             echo ('user not found on gaps, error in email or password');
         } else {
+            $nomEntier = $nomPrenom->item(0)->nodeValue;
+            self::store($email, $password, $nomEntier);
             echo ("user found and connected and mot de passe modifié");
             }
         }
