@@ -1,4 +1,8 @@
 <h1 dir="ltr">
+    Documentation Backend
+</h1>
+<a href="https://pnj-pingouin.heig-vd.ch/request-docs">Documentation</a>.
+<h1 dir="ltr">
     Documentation d’installation
 </h1>
 <h2 dir="ltr">
