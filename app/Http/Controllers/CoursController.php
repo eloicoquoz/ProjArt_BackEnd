@@ -371,8 +371,16 @@ class CoursController extends Controller
         if ($profUser) {
             $cours->users()->attach($profUser->Email);
         }
+        $mois = array('janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre');
+        $debutArray = explode(' ', $request->Debut);
+        $dateDebut = $debutArray[0];
+        $dateDebut = explode('-', $dateDebut);
+        $jourDebut = $dateDebut[2];
+        $moisDebut = intval($dateDebut[1]);
+        $anneeDebut = $dateDebut[0];
+        $heureDebut = $debutArray[1];
         $titre = "Modification d'un cours";
-        $desc = "Le cours de " . $cours->matiere_id . " du " . $cours->Debut . " a été modifié.";
+        $desc = "Le cours de " . $cours->matiere_id . " du " . $jourDebut . ' ' . $mois[$moisDebut] . ' ' . $anneeDebut . " a été modifié.";
         $user = $request->User;
         $notification = app('App\Http\Controllers\NotificationController')->store($titre, $desc, $user);
         $destinataire = app('App\Http\Controllers\DestinataireController')->store($cours->id, $notification->id);
