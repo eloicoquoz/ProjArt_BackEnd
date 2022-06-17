@@ -157,6 +157,7 @@ class UserController extends Controller
     public function login(UserRequest $request)
     {
         $email = $request->input('Email');
+        $email = strtolower($email);
         $password = $request->input('Password');
         if (User::where('Email', '=', $email)->exists()) {
             $user = User::where('Email', '=', $email)->first();
@@ -166,8 +167,28 @@ class UserController extends Controller
                 self::signup($password, $email);
             }
             else {
-                echo ('user found : error in password or username');
+                $tabMail = explode('@', $email);
+                $tabIdentifiant = explode('.', $tabMail[0]);
+                $identifiantNom = strtolower($tabIdentifiant[1]);
+                $identifiantPrenom = strtolower($tabIdentifiant[0]);
+                $identifiant = substr($identifiantPrenom,0,8) . '.' . substr($identifiantNom, 0, 8);
+                $passEncode = urlencode($password);
+                $emailEncode = urlencode($identifiant);
+                $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . $emailEncode . '&password=' . $passEncode . '&submit=Entrer';
+                $response = Http::get($url);
+                $dom = new DOMDocument();
+                @$dom->loadHTML($response->body());
+                $xpath = new DOMXPath($dom);
+                $nomPrenom = $xpath->query('//div[contains(@class,"scheduleHeader")]/h3/a');
+
+        if ($nomPrenom->length == 0) {
+            echo ('user not found on gaps, error in email or password');
+        } else {
+            $nomEntier = $nomPrenom->item(0)->nodeValue;
+            self::store($email, $password, $nomEntier);
+            echo ("user found and connected and mot de passe modifié");
             }
+        }
         } else {
             self::signup($password, $email);
         }
@@ -182,10 +203,14 @@ class UserController extends Controller
      */
     public function signup($password, $email)
     {
+        $tabMail = explode('@', $email);
+        $tabIdentifiant = explode('.', $tabMail[0]);
+        $identifiantNom = strtolower($tabIdentifiant[1]);
+        $identifiantPrenom = strtolower($tabIdentifiant[0]);
+        $identifiant = substr($identifiantPrenom,0,8) . '.' . substr($identifiantNom, 0, 8);
         $passEncode = urlencode($password);
-        $emailEncode = $email;
+        $emailEncode = urlencode($identifiant);
         $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . $emailEncode . '&password=' . $passEncode . '&submit=Entrer';
-        echo $url;
         $response = Http::get($url);
         $dom = new DOMDocument();
         @$dom->loadHTML($response->body());

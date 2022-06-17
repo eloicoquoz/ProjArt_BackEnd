@@ -34,7 +34,13 @@ class ScrapingController extends Controller
                 $trimestre = 3;
             }
         }
-        $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . urlencode($user) . '&password=' . urlencode($pwd) . '&submit=Entrer&annee=' . $year . '&trimestre=' . $trimestre . '&type=2';
+        $tabMail = explode('@', $user);
+        $tabIdentifiant = explode('.', $tabMail[0]);
+        $identifiantNom = strtolower($tabIdentifiant[1]);
+        $identifiantPrenom = strtolower($tabIdentifiant[0]);
+        $identifiant = substr($identifiantPrenom,0,8) . '.' . substr($identifiantNom, 0, 8);
+        $emailEncode = urlencode($identifiant);
+        $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . $emailEncode . '&password=' . urlencode($pwd) . '&submit=Entrer&annee=' . $year . '&trimestre=' . $trimestre . '&type=2';
         $response = $this->timetableFromURL($url);
         $lessons = $response[0];
         $matters = $response[1];
