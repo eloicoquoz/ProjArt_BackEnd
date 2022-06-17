@@ -376,7 +376,7 @@ class CoursController extends Controller
         $dateDebut = $debutArray[0];
         $dateDebut = explode('-', $dateDebut);
         $jourDebut = $dateDebut[2];
-        $moisDebut = intval($dateDebut[1]);
+        $moisDebut = intval($dateDebut[1])-1;
         $anneeDebut = $dateDebut[0];
         $heureDebut = $debutArray[1];
         $titre = "Modification d'un cours";
