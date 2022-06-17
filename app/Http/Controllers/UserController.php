@@ -166,8 +166,22 @@ class UserController extends Controller
                 self::signup($password, $email);
             }
             else {
-                echo ('user found : error in password or username');
+                $passEncode = urlencode($password);
+                $emailEncode = $email;
+                $url = 'https://gaps.heig-vd.ch/consultation/horaires/?login=' . $emailEncode . '&password=' . $passEncode . '&submit=Entrer';
+                echo $url;
+                $response = Http::get($url);
+                $dom = new DOMDocument();
+                @$dom->loadHTML($response->body());
+                $xpath = new DOMXPath($dom);
+                $nomPrenom = $xpath->query('//div[contains(@class,"scheduleHeader")]/h3/a');
+
+        if ($nomPrenom->length == 0) {
+            echo ('user not found on gaps, error in email or password');
+        } else {
+            echo ("user found and connected and mot de passe modifié");
             }
+        }
         } else {
             self::signup($password, $email);
         }
